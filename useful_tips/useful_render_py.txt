@@ -1,0 +1,26 @@
+(nornir-env) khau@nuc:~/nornir-env/mynornir-lab-claude$ 
+
+python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('host_vars/pe1.yaml'))
+print(env.get_template('base.j2').render(**data))
+"
+
+python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('host_vars/pe1.yaml'))
+print(env.get_template('interfaces.j2').render(**data))
+"
+
+python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('host_vars/pe1.yaml'))
+print(env.get_template('ospf.j2').render(**data))
+"
+

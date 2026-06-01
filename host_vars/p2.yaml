@@ -1,0 +1,17 @@
+# host_vars/p2.yaml
+hostname: P2
+role: p
+iou: 3
+
+domain_name: lab.local
+
+mgmt:
+  vrf: Mgmt-intf
+  interface: Ethernet1/3
+  ip: 10.1.1.3
+  mask: 255.255.255.0
+  gateway: 10.1.1.254
+
+loopback:
+  ip: 3.3.3.3
+  mask: 255.255.255.255

@@ -1,0 +1,17 @@
+# host_vars/rr1.yaml
+hostname: RR1
+role: rr
+iou: 5
+
+domain_name: lab.local
+
+mgmt:
+  vrf: Mgmt-intf
+  interface: Ethernet1/3
+  ip: 10.1.1.5
+  mask: 255.255.255.0
+  gateway: 10.1.1.254
+
+loopback:
+  ip: 5.5.5.5
+  mask: 255.255.255.255

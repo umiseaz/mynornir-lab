@@ -1,0 +1,13 @@
+{% include 'base.j2' %}
+
+{% if role == 'pe' %}
+{% include 'vrf.j2' %}
+{% endif %}
+
+{% include 'interfaces.j2' %}
+
+{% if role in ['pe', 'p', 'rr'] %}
+{% include 'ospf.j2' %}
+{% include 'mpls.j2' %}
+{% include 'bgp.j2' %}
+{% endif %}

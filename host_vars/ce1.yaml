@@ -1,0 +1,17 @@
+# host_vars/ce1.yaml
+hostname: CE1
+role: ce
+iou: 7
+
+domain_name: lab.local
+
+mgmt:
+  vrf: Mgmt-intf
+  interface: Ethernet1/3
+  ip: 10.1.1.7
+  mask: 255.255.255.0
+  gateway: 10.1.1.254
+
+loopback:
+  ip: 77.77.77.77
+  mask: 255.255.255.255
