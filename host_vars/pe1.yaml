@@ -49,3 +49,39 @@ interfaces:
     ip: 172.1.17.1
     mask: 255.255.255.0
     vrf: VRF_A
+
+bgp:
+  asn: 65
+  router_id: 1.1.1.1
+
+  peer_sessions:
+    - name: rr-peers
+      remote_as: 65
+      update_source: Loopback0
+      next_hop_self: true
+
+  peer_policies:
+    - name: rr-peers-ipv4
+      send_community: both
+    - name: rr-peers-vpnv4
+      send_community: both
+
+  ibgp_peers:
+    - ip: 5.5.5.5
+      description: "RR1"
+      peer_session: rr-peers
+      peer_policy: rr-peers-ipv4
+      peer_policy_vpnv4: rr-peers-vpnv4
+    - ip: 6.6.6.6
+      description: "RR2"
+      peer_session: rr-peers
+      peer_policy: rr-peers-ipv4
+      peer_policy_vpnv4: rr-peers-vpnv4
+
+  ebgp_peers:
+    - ip: 172.1.17.7
+      remote_as: 65001
+      description: "CE1"
+      vrf: VRF_A
+      route_map_in: CE1-IN
+      route_map_out: CE1-OUT

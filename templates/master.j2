@@ -11,3 +11,13 @@
 {% include 'mpls.j2' %}
 {% include 'bgp.j2' %}
 {% endif %}
+
+{% if role == 'pe' %}
+{% include 'bgp_vpnv4.j2' %}
+{% include 'bgp_pe_ce.j2' %}
+{% endif %}
+
+{% if role in ['pe', 'ce'] %}
+{% include 'prefix_lists.j2' %}
+{% include 'route_maps.j2' %}
+{% endif %}
