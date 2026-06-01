@@ -39,11 +39,11 @@ interfaces:
     description: "link to P1"
     ip: 10.1.2.1
     mask: 255.255.255.0
+    mpls: true
     ospf:
       process: 1
       area: 0
       network_type: point-to-point
-
   - name: Ethernet1/0
     description: "VRF A to CE1"
     ip: 172.1.17.1

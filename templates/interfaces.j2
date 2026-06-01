@@ -13,6 +13,9 @@ interface {{ intf.name }}
  ip ospf {{ intf.ospf.process }} area {{ intf.ospf.area }}
 {% endif %}
 {% endif %}
+{% if intf.mpls is defined and intf.mpls %}
+ mpls ip
+{% endif %}
  no shutdown
 !
 {% endfor %}

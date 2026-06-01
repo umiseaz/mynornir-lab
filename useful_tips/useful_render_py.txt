@@ -31,6 +31,15 @@ print('loopback:', data['loopback'])
 print('ospf:', data['ospf'])
 "
 
+python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('host_vars/pe1.yaml'))
+print(env.get_template('mpls.j2').render(**data))
+"
+
+
 (nornir-env) khau@nuc:~/nornir-env/mynornir-lab$ for f in host_vars/*.yaml; do
     python3 -c "import yaml; yaml.safe_load(open('$f')); print('$f OK')"
 done
@@ -42,3 +51,51 @@ host_vars/pe1.yaml OK
 host_vars/pe2.yaml OK
 host_vars/rr1.yaml OK
 host_vars/rr2.yaml OK
+
+khau@nuc:~/nornir-env/mynornir-lab$ for f in host_vars/pe1.yaml host_vars/pe2.yaml host_vars/p1.yaml host_vars/p2.yaml host_vars/rr1.yaml host_vars/rr2.yaml; do
+    echo "=== $(basename $f .yaml) ==="
+    python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('$f'))
+print(env.get_template('mpls.j2').render(**data))
+"
+done
+=== pe1 ===
+mpls ip
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+=== pe2 ===
+mpls ip
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+=== p1 ===
+mpls ip
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+=== p2 ===
+mpls ip
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+=== rr1 ===
+mpls ip
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+=== rr2 ===
+mpls ip
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+
+
+for f in host_vars/*.yaml; do
+    role=$(python3 -c "import yaml; print(yaml.safe_load(open('$f'))['role'])")
+    if [[ "$role" != "ce" ]]; then
+        echo "=== $(basename $f .yaml) ==="
+        python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('$f'))
+print(env.get_template('mpls.j2').render(**data))
+"
