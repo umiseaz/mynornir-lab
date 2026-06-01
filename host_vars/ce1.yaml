@@ -1,5 +1,6 @@
 # host_vars/ce1.yaml
 hostname: CE1
+loopback_name: Loopback0
 role: ce
 iou: 7
 
@@ -12,6 +13,12 @@ mgmt:
   mask: 255.255.255.0
   gateway: 10.1.1.254
 
-loopback:
-  ip: 77.77.77.77
-  mask: 255.255.255.255
+interfaces:
+  - name: Loopback0
+    description: "Router ID"
+    ip: 77.77.77.77
+    mask: 255.255.255.255
+  - name: Ethernet1/0
+    description: "link to PE1"
+    ip: 172.1.17.7
+    mask: 255.255.255.0

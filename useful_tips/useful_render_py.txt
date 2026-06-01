@@ -24,3 +24,21 @@ data = yaml.safe_load(open('host_vars/pe1.yaml'))
 print(env.get_template('ospf.j2').render(**data))
 "
 
+python3 -c "
+import yaml
+data = yaml.safe_load(open('host_vars/p1.yaml'))
+print('loopback:', data['loopback'])
+print('ospf:', data['ospf'])
+"
+
+(nornir-env) khau@nuc:~/nornir-env/mynornir-lab$ for f in host_vars/*.yaml; do
+    python3 -c "import yaml; yaml.safe_load(open('$f')); print('$f OK')"
+done
+host_vars/ce1.yaml OK
+host_vars/ce2.yaml OK
+host_vars/p1.yaml OK
+host_vars/p2.yaml OK
+host_vars/pe1.yaml OK
+host_vars/pe2.yaml OK
+host_vars/rr1.yaml OK
+host_vars/rr2.yaml OK

@@ -1,7 +1,9 @@
 # host_vars/pe2.yaml
 hostname: PE2
+loopback_name: Loopback0
 role: pe
 iou: 4
+
 domain_name: lab.local
 
 mgmt:
@@ -11,18 +13,12 @@ mgmt:
   mask: 255.255.255.0
   gateway: 10.1.1.254
 
-loopback:
-  ip: 4.4.4.4
-  mask: 255.255.255.255
-  ospf:
-    process: 1
-    area: 0
-
 ospf:
   process_id: 1
   router_id: 4.4.4.4
   reference_bandwidth: 1000000
   passive_interfaces:
+    - Loopback0
     - Ethernet1/0
 
 vrfs:
@@ -32,6 +28,13 @@ vrfs:
     rt_import: "65:65001"
 
 interfaces:
+  - name: Loopback0
+    description: "Router ID"
+    ip: 2.2.2.2
+    mask: 255.255.255.255
+    ospf:
+      process: 1
+      area: 0
   - name: Ethernet0/0
     description: "link to P2"
     ip: 10.3.4.4
