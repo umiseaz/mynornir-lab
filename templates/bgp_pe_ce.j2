@@ -1,0 +1,12 @@
+{% if bgp.pe_ce is defined and bgp.pe_ce %}
+{% for peer in bgp.ebgp_peers %}
+address-family ipv4 vrf {{ peer.vrf }}
+  neighbor {{ peer.ip }} remote-as {{ peer.remote_as }}
+  neighbor {{ peer.ip }} description {{ peer.description }}
+  neighbor {{ peer.ip }} as-override
+  neighbor {{ peer.ip }} route-map {{ peer.route_map_in }} in
+  neighbor {{ peer.ip }} route-map {{ peer.route_map_out }} out
+  no synchronization
+exit-address-family
+{% endfor %}
+{% endif %}

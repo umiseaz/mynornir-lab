@@ -42,6 +42,8 @@ bgp:
   asn: 65
   router_id: 5.5.5.5
   cluster_id: 0.0.0.1
+  vpnv4: true
+  pe_ce: false
 
   peer_sessions:
     - name: edge-rr-clients

@@ -59,6 +59,8 @@ interfaces:
 bgp:
   asn: 65
   router_id: 2.2.2.2
+  vpnv4: false
+  pe_ce: false
 
   peer_sessions:
     - name: rr-peers
