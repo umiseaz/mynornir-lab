@@ -1,0 +1,15 @@
+{% set vpnv4_peers = [] %}
+{% for peer in bgp.ibgp_peers %}
+{% if peer.peer_policy_vpnv4 is defined %}
+{% set _ = vpnv4_peers.append(peer) %}
+{% endif %}
+{% endfor %}
+{% if vpnv4_peers %}
+address-family vpnv4
+{% for peer in vpnv4_peers %}
+  neighbor {{ peer.ip }} activate
+  neighbor {{ peer.ip }} send-community extended
+  neighbor {{ peer.ip }} inherit peer-policy {{ peer.peer_policy_vpnv4 }}
+{% endfor %}
+ exit-address-family
+{% endif %}

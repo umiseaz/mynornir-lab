@@ -55,3 +55,32 @@ interfaces:
       process: 1
       area: 0
       network_type: point-to-point
+
+bgp:
+  asn: 65
+  router_id: 3.3.3.3
+
+  peer_sessions:
+    - name: rr-peers
+      remote_as: 65
+      update_source: Loopback0
+      password: cisco
+      description: "RR Peers"
+
+  peer_policies:
+    - name: rr-peers-ipv4
+      send_community: both
+      next_hop_self: true
+    - name: rr-peers-vpnv4
+      send_community: both
+      next_hop_self: true
+
+  ibgp_peers:
+    - ip: 5.5.5.5
+      description: "RR1"
+      peer_session: rr-peers
+      peer_policy: rr-peers-ipv4
+    - ip: 6.6.6.6
+      description: "RR2"
+      peer_session: rr-peers
+      peer_policy: rr-peers-ipv4

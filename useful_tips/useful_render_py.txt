@@ -99,3 +99,79 @@ env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstri
 data = yaml.safe_load(open('$f'))
 print(env.get_template('mpls.j2').render(**data))
 "
+
+for f in host_vars/*.yaml; do
+    python3 -c "import yaml; yaml.safe_load(open('$f')); print('$f OK')"
+done
+
+for f in host_vars/pe1.yaml host_vars/pe2.yaml host_vars/p1.yaml host_vars/p2.yaml host_vars/rr1.yaml host_vars/rr2.yaml; do
+    echo "=== $(basename $f .yaml) ==="
+    python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('$f'))
+print(env.get_template('bgp.j2').render(**data))
+"
+done
+
+for f in host_vars/pe1.yaml; do
+    echo "=== $(basename $f .yaml) ==="
+    python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('$f'))
+print(env.get_template('bgp.j2').render(**data))
+"
+done
+
+
+
+python3 -c "
+import yaml
+data = yaml.safe_load(open('host_vars/pe2.yaml'))
+print('bgp router_id:', data['bgp']['router_id'])
+"
+
+
+
+for f in host_vars/pe1.yaml host_vars/rr1.yaml; do
+    echo "=== $(basename $f .yaml) ==="
+    python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('$f'))
+print(env.get_template('bgp_vpnv4.j2').render(**data))
+"
+done
+
+
+
+python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('host_vars/p1.yaml'))
+print(env.get_template('bgp_vpnv4.j2').render(**data))
+"
+
+
+
+python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('host_vars/p1.yaml'))
+print(env.get_template('bgp_vpnv4.j2').render(**data))
+"
+
+
+
+python3 -c "
+import yaml
+data = yaml.safe_load(open('host_vars/p1.yaml'))
+for peer in data['bgp']['ibgp_peers']:
+    print(peer)
+"

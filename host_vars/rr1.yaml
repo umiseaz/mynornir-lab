@@ -47,12 +47,18 @@ bgp:
     - name: edge-rr-clients
       remote_as: 65
       update_source: Loopback0
+      password: cisco
+      description: "Edge RR Clients"
     - name: core-rr-clients
       remote_as: 65
       update_source: Loopback0
+      password: cisco
+      description: "Core RR Clients"
     - name: rr-other
       remote_as: 65
       update_source: Loopback0
+      password: cisco
+      description: "Other RR Clients"
 
   peer_policies:
     - name: edge-rr-clients-ipv4

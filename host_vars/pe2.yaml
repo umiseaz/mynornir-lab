@@ -52,19 +52,22 @@ interfaces:
 
 bgp:
   asn: 65
-  router_id: 2.2.2.2
+  router_id: 4.4.4.4
 
   peer_sessions:
     - name: rr-peers
       remote_as: 65
       update_source: Loopback0
-      next_hop_self: true
+      password: cisco
+      description: "RR Peers"
 
   peer_policies:
     - name: rr-peers-ipv4
       send_community: both
+      next_hop_self: true
     - name: rr-peers-vpnv4
       send_community: both
+      next_hop_self: true
 
   ibgp_peers:
     - ip: 5.5.5.5
@@ -81,7 +84,8 @@ bgp:
   ebgp_peers:
     - ip: 172.1.28.8
       remote_as: 65001
-      description: "CE1"
+      description: "CE2"
       vrf: VRF_A
-      route_map_in: CE1-IN
-      route_map_out: CE1-OUT
+      as_override: true
+      route_map_in: CE2-IN
+      route_map_out: CE2-OUT
