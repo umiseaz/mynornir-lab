@@ -1,5 +1,5 @@
 router bgp {{ bgp.asn }}
- ! --- peer-policy templates ---
+ {# ! --- peer-policy templates --- #}
 {% for policy in bgp.peer_policies %}
  template peer-policy {{ policy.name }}
  {% if policy.next_hop_self is defined and policy.next_hop_self %}
@@ -12,10 +12,9 @@ router bgp {{ bgp.asn }}
   route-reflector-client
 {% endif %}
  exit-peer-policy
- !
 {% endfor %}
 !
- ! --- peer-session templates ---
+ {# ! --- peer-session templates --- #}
 {% for session in bgp.peer_sessions %}
  template peer-session {{ session.name }}
   remote-as {{ session.remote_as }}
@@ -25,7 +24,6 @@ router bgp {{ bgp.asn }}
   timers 30 90
   fall-over
  exit-peer-session
-  !
 {% endfor %}
 !
  bgp router-id {{ bgp.router_id }}
@@ -35,7 +33,7 @@ router bgp {{ bgp.asn }}
  bgp graceful-restart stalepath-time 360
  bgp graceful-restart
 !
- ! --- iBGP neighbors ---
+ {# ! --- iBGP neighbors --- #}
 {% for peer in bgp.ibgp_peers %}
  neighbor {{ peer.ip }} description {{ peer.description }}
  neighbor {{ peer.ip }} inherit peer-session {{ peer.peer_session }}
@@ -49,3 +47,5 @@ router bgp {{ bgp.asn }}
   {% endfor %}
   no auto-summary
  exit-address-family
+!
+

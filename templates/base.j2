@@ -9,9 +9,6 @@ vrf definition {{ mgmt.vrf }}
  address-family ipv4
  exit-address-family
 !
-interface Loopback0
- ip address {{ loopback.ip }} {{ loopback.mask }}
-!
 interface {{ mgmt.interface }}
  description OOB Management
  vrf forwarding {{ mgmt.vrf }}

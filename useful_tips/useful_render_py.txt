@@ -175,3 +175,48 @@ data = yaml.safe_load(open('host_vars/p1.yaml'))
 for peer in data['bgp']['ibgp_peers']:
     print(peer)
 "
+
+for f in host_vars/pe1.yaml host_vars/pe2.yaml; do     echo "=== $(basename $f .yaml) ===";     python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('$f'))
+print(env.get_template('bgp_pe_ce.j2').render(**data))
+"; done
+
+
+
+for f in host_vars/pe1.yaml host_vars/ce1.yaml; do
+    echo "=== $(basename $f .yaml) ==="
+    python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('$f'))
+print(env.get_template('prefix_lists.j2').render(**data))
+"
+done
+
+for f in host_vars/pe1.yaml host_vars/ce1.yaml; do
+    echo "=== $(basename $f .yaml) ==="
+    python3 -c "
+import yaml
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates/'), trim_blocks=True, lstrip_blocks=True)
+data = yaml.safe_load(open('$f'))
+print(env.get_template('route_maps.j2').render(**data))
+"
+done
+
+
+for f in rendered/*.cfg; do     echo "========== $(basename $f) ==========";     cat $f;     echo ""; done
+
+
+for f in rendered/*.cfg; do
+    echo "========== $(basename $f) =========="
+    cat $f
+    echo ""
+done 2>&1 | less
+
+
+grep -n "[a-z]!" rendered/*.cfg

@@ -34,3 +34,25 @@ bgp:
       route_map_in: PE2-IN
       route_map_out: PE2-OUT
       # allowas_in: 1         # integer, renders as "allowas-in 1"
+
+prefix_lists:
+  - name: PE2-PREFIXES
+    entries:
+      - seq: 10
+        action: permit
+        prefix: 0.0.0.0/0
+        le: 32
+
+route_maps:
+  - name: PE2-IN
+    description: "Accept routes from PE2"
+    entries:
+      - seq: 10
+        action: permit
+        match: "ip address prefix-list PE2-PREFIXES"
+
+  - name: PE2-OUT
+    description: "Advertise CE2 prefixes to PE2"
+    entries:
+      - seq: 999
+        action: permit

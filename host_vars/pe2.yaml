@@ -30,7 +30,7 @@ vrfs:
 interfaces:
   - name: Loopback0
     description: "Router ID"
-    ip: 2.2.2.2
+    ip: 4.4.4.4
     mask: 255.255.255.255
     ospf:
       process: 1
@@ -91,3 +91,27 @@ bgp:
       as_override: true
       route_map_in: CE2-IN
       route_map_out: CE2-OUT
+
+prefix_lists:
+  - name: CE2-PREFIXES
+    entries:
+      - seq: 10
+        action: permit
+        prefix: 88.88.88.88/32
+      - seq: 20
+        action: permit
+        prefix: 172.1.48.0/24
+
+route_maps:
+  - name: CE2-IN
+    description: "Accept CE2 prefixes"
+    entries:
+      - seq: 10
+        action: permit
+        match: "ip address prefix-list CE2-PREFIXES"
+
+  - name: CE2-OUT
+    description: "Advertise VRF_A routes to CE2"
+    entries:
+      - seq: 999
+        action: permit
