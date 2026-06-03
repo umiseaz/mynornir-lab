@@ -100,3 +100,31 @@ pip install rich nornir_rich
 pip install nornir_jinja2
 pip install pyats genie
 ```
+
+```
+# Test bgp.j2 for pe1 only
+python3 test_template.py bgp.j2 pe1
+
+# Test bgp.j2 for pe1 and pe2
+python3 test_template.py bgp.j2 pe1 pe2
+
+# Test interfaces.j2 for all core routers
+python3 test_template.py interfaces.j2 pe1 pe2 p1 p2 rr1 rr2
+
+# Test master.j2 (full config) for one router
+python3 test_template.py master.j2 pe1
+```
+```
+# 1. Update YAML
+# 2. Test the specific template
+python3 test_template.py bgp.j2 pe1
+
+# 3. Dry run full render
+python3 render.py --dry-run
+
+# 4. Push
+python3 render.py
+
+# 5. Save
+python3 save.py
+```

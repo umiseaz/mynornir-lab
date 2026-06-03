@@ -1,4 +1,5 @@
 import os
+import sys
 import yaml
 import glob
 from nornir import InitNornir
@@ -8,12 +9,12 @@ from jinja2 import Environment, FileSystemLoader
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Nornir inventory
+# ── Dry run flag ──────────────────────────────────────────
+DRY_RUN = "--dry-run" in sys.argv
+
+# ── Nornir inventory ──────────────────────────────────────
 nr = InitNornir(
-    runner={
-        "plugin": "threaded",
-        "options": {"num_workers": 5}
-    },
+    runner={"plugin": "threaded", "options": {"num_workers": 5}},
     inventory={
         "plugin": "SimpleInventory",
         "options": {
@@ -24,21 +25,20 @@ nr = InitNornir(
     }
 )
 
-# Jinja2 environment
+# ── Jinja2 environment ────────────────────────────────────
 env = Environment(
     loader=FileSystemLoader(os.path.join(BASE_DIR, "templates/")),
     trim_blocks=True,
     lstrip_blocks=True,
 )
 
-# Load defaults once
+# ── Load defaults ─────────────────────────────────────────
 with open(os.path.join(BASE_DIR, "inventory/defaults.yaml")) as f:
     defaults = yaml.safe_load(f) or {}
 
-# Render master.j2 for every host
-host_files = sorted(glob.glob(os.path.join(BASE_DIR, "host_vars/*.yaml")))
-
+# ── Render ────────────────────────────────────────────────
 rendered_configs = {}
+host_files = sorted(glob.glob(os.path.join(BASE_DIR, "host_vars/*.yaml")))
 
 for host_file in host_files:
     with open(host_file) as f:
@@ -46,8 +46,7 @@ for host_file in host_files:
 
     data = {**defaults, **host_data}
     hostname = data["hostname"]
-    template = env.get_template("master.j2")
-    rendered = template.render(**data)
+    rendered = env.get_template("master.j2").render(**data)
 
     out_path = os.path.join(BASE_DIR, f"rendered/{hostname.lower()}.cfg")
     with open(out_path, "w") as f:
@@ -56,26 +55,30 @@ for host_file in host_files:
     rendered_configs[hostname] = rendered
     print(f"[+] {hostname} -> rendered/{hostname.lower()}.cfg")
 
-# Push configs via Netmiko
-def push_config(task):
-    hostname = task.host.name
-    config = rendered_configs.get(hostname)
-    if not config:
-        print(f"[!] No config found for {hostname}")
-        return
+# ── Push or dry run ───────────────────────────────────────
+if DRY_RUN:
+    print("\n[DRY RUN] Configs rendered to rendered/ folder — no push performed.")
+    print("[DRY RUN] Review configs then run without --dry-run to push.")
+else:
+    def push_config(task):
+        hostname = task.host.name
+        config = rendered_configs.get(hostname)
+        if not config:
+            print(f"[!] No config found for {hostname}")
+            return
 
-    config_lines = [
-        line for line in config.splitlines()
-        if line.strip() and not line.strip().startswith("!")
-    ]
+        config_lines = [
+            line for line in config.splitlines()
+            if line.strip() and not line.strip().startswith("!")
+        ]
 
-    print(f"[~] Pushing config to {hostname}...")
-    task.run(
-        task=netmiko_send_config,
-        config_commands=config_lines,
-    )
-    print(f"[✓] {hostname} done")
+        print(f"[~] Pushing config to {hostname}...")
+        task.run(
+            task=netmiko_send_config,
+            config_commands=config_lines,
+        )
+        print(f"[✓] {hostname} done")
 
-print("\nPushing configs to all routers...")
-results = nr.run(task=push_config)
-print_result(results)
+    print("\nPushing configs to all routers...")
+    results = nr.run(task=push_config)
+    print_result(results)
