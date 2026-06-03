@@ -30,12 +30,19 @@ env = Environment(
     lstrip_blocks=True,
 )
 
+# Load defaults once — applied to all hosts
+with open(os.path.join(BASE_DIR, "inventory/defaults.yaml")) as f:
+    defaults = yaml.safe_load(f) or {}
+
 # Render master.j2 for every host
 host_files = sorted(glob.glob(os.path.join(BASE_DIR, "host_vars/*.yaml")))
 
 for host_file in host_files:
     with open(host_file) as f:
-        data = yaml.safe_load(f)
+        host_data = yaml.safe_load(f)
+
+    # Merge — defaults first, host_data overrides
+    data = {**defaults, **host_data}
 
     hostname = data["hostname"]
     template = env.get_template("master.j2")

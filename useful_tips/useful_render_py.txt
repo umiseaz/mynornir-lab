@@ -220,3 +220,21 @@ done 2>&1 | less
 
 
 grep -n "[a-z]!" rendered/*.cfg
+
+
+
+python3 -c "
+import yaml
+defaults = yaml.safe_load(open('inventory/defaults.yaml')) or {}
+host = yaml.safe_load(open('host_vars/pe1.yaml'))
+data = {**defaults, **host}
+print('ntp:', data.get('ntp'))
+print('syslog:', data.get('syslog'))
+print('hostname:', data.get('hostname'))
+"
+
+Claude responded: Perfect — merge working correctly.Perfect — merge working correctly. ✅
+
+ntp → from defaults.yaml ✅
+syslog → from defaults.yaml ✅
+hostname → from pe1.yaml overrides defaults ✅

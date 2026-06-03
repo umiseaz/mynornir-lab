@@ -1,3 +1,15 @@
+# inventory/defaults.yaml
 ---
 username: admin
 password: admin
+
+ntp:
+  servers:
+    - 10.1.1.254
+  source: Mgmt-intf
+
+syslog:
+  servers:
+    - 10.1.1.254
+  source: Ethernet1/3
+  facility: local6

@@ -21,3 +21,13 @@ line vty 0 4
  login local
  transport input ssh
 !
+{% for server in ntp.servers %}
+ntp server {{ server }} source {{ ntp.source }}
+{% endfor %}
+!
+logging source-interface {{ syslog.source }}
+logging facility {{ syslog.facility }}
+{% for server in syslog.servers %}
+logging host {{ server }}
+{% endfor %}
+!
