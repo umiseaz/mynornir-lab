@@ -1,0 +1,3 @@
+2026-06-03 14:34:39,530 -  nornir.core -     INFO -        run() - Running task 'push_config' with args {} on 8 hosts
+2026-06-03 14:42:44,131 -  nornir.core -     INFO -        run() - Running task 'push_config' with args {} on 8 hosts
+2026-06-03 14:44:20,985 -  nornir.core -     INFO -        run() - Running task 'push_config' with args {} on 8 hosts

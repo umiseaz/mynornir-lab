@@ -37,6 +37,7 @@ interfaces:
       process: 1
       area: 0
       network_type: point-to-point
+      auth: true
   - name: Ethernet0/1
     description: "link to P2"
     ip: 10.2.3.2
@@ -46,6 +47,7 @@ interfaces:
       process: 1
       area: 0
       network_type: point-to-point
+      auth: true
   - name: Ethernet0/2
     description: "link to RR1"
     ip: 10.2.5.2
@@ -55,6 +57,7 @@ interfaces:
       process: 1
       area: 0
       network_type: point-to-point
+      auth: true
 
 bgp:
   asn: 65

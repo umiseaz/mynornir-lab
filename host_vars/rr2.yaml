@@ -37,6 +37,7 @@ interfaces:
       process: 1
       area: 0
       network_type: point-to-point
+      auth: true
 
 bgp:
   asn: 65

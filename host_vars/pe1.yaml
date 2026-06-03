@@ -19,7 +19,6 @@ ospf:
   reference_bandwidth: 1000000
   passive_interfaces:
     - Loopback0
-    - Ethernet1/0
 
 vrfs:
   - name: VRF_A
@@ -44,6 +43,7 @@ interfaces:
       process: 1
       area: 0
       network_type: point-to-point
+      auth: true
   - name: Ethernet1/0
     description: "VRF A to CE1"
     ip: 172.1.17.1

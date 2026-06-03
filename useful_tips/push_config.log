@@ -1,0 +1,925 @@
+(nornir-env) khau@nuc:~/nornir-env/mynornir-lab$ python3 render.py
+[+] CE1 -> rendered/ce1.cfg
+[+] CE2 -> rendered/ce2.cfg
+[+] P1 -> rendered/p1.cfg
+[+] P2 -> rendered/p2.cfg
+[+] PE1 -> rendered/pe1.cfg
+[+] PE2 -> rendered/pe2.cfg
+[+] RR1 -> rendered/rr1.cfg
+[+] RR2 -> rendered/rr2.cfg
+
+Pushing configs to all routers...
+[~] Pushing config to PE1...
+[~] Pushing config to PE2...
+[~] Pushing config to P1...
+[~] Pushing config to P2...
+[~] Pushing config to RR1...
+[✓] P2 done
+[~] Pushing config to RR2...
+[✓] PE2 done
+[~] Pushing config to CE1...
+[✓] PE1 done
+[~] Pushing config to CE2...
+[✓] RR1 done
+[✓] P1 done
+[✓] CE1 done
+[✓] CE2 done
+[✓] RR2 done
+push_config*********************************************************************
+* CE1 ** changed : True ********************************************************
+vvvv push_config ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+---- netmiko_send_config ** changed : True ------------------------------------- INFO
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+CE1(config)#hostname CE1
+CE1(config)#ip domain-name lab.local
+CE1(config)#ip cef
+CE1(config)#username admin privilege 15 secret admin
+CE1(config)#ip ssh version 2
+CE1(config)#crypto key generate rsa general-keys modulus 2048
+% You already have RSA keys defined named CE1.lab.local.
+% They will be replaced.
+
+% The key modulus size is 2048 bits
+% Generating 2048 bit RSA keys, keys will be non-exportable...
+[OK] (elapsed time was 3 seconds)
+
+CE1(config)#vrf definition Mgmt-intf
+CE1(config-vrf)# address-family ipv4
+CE1(config-vrf-af)# exit-address-family
+CE1(config-vrf)#interface Ethernet1/3
+CE1(config-if)# description OOB Management
+CE1(config-if)# vrf forwarding Mgmt-intf
+CE1(config-if)# ip address 10.1.1.7 255.255.255.0
+CE1(config-if)# no shutdown
+CE1(config-if)#ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 10.1.1.254
+CE1(config)#line vty 0 4
+CE1(config-line)# login local
+CE1(config-line)# transport input ssh
+CE1(config-line)#ntp server 10.1.1.254 source Ethernet1/3
+CE1(config)#logging source-interface Ethernet1/3 vrf Mgmt-intf
+CE1(config)#logging facility local6
+CE1(config)#logging host 10.1.1.254 vrf Mgmt-intf
+CE1(config)#interface Loopback0
+CE1(config-if)# description Router ID
+CE1(config-if)# ip address 77.77.77.77 255.255.255.255
+CE1(config-if)# no shutdown
+CE1(config-if)#interface Ethernet1/0
+CE1(config-if)# description link to PE1
+CE1(config-if)# ip address 172.1.17.7 255.255.255.0
+CE1(config-if)# no shutdown
+CE1(config-if)#ip prefix-list PE1-PREFIXES seq 10 permit 0.0.0.0/0 le 32
+CE1(config)#route-map PE1-IN permit 10
+CE1(config-route-map)# description Accept routes from PE1
+CE1(config-route-map)# match ip address prefix-list PE1-PREFIXES
+CE1(config-route-map)#route-map PE1-OUT permit 999
+CE1(config-route-map)# description Advertise CE1 prefixes to PE1
+CE1(config-route-map)#router bgp 65001
+CE1(config-router)# bgp router-id 77.77.77.77
+CE1(config-router)# bgp log-neighbor-changes
+CE1(config-router)# neighbor 172.1.17.1 remote-as 65
+CE1(config-router)# neighbor 172.1.17.1 description PE1
+CE1(config-router)# address-family ipv4
+CE1(config-router-af)#  neighbor 172.1.17.1 activate
+CE1(config-router-af)#  neighbor 172.1.17.1 route-map PE1-IN in
+CE1(config-router-af)#  neighbor 172.1.17.1 route-map PE1-OUT out
+CE1(config-router-af)#  no auto-summary
+CE1(config-router-af)# exit-address-family
+CE1(config-router)#end
+CE1#
+^^^^ END push_config ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* CE2 ** changed : True ********************************************************
+vvvv push_config ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+---- netmiko_send_config ** changed : True ------------------------------------- INFO
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+CE2(config)#hostname CE2
+CE2(config)#ip domain-name lab.local
+CE2(config)#ip cef
+CE2(config)#username admin privilege 15 secret admin
+CE2(config)#ip ssh version 2
+CE2(config)#crypto key generate rsa general-keys modulus 2048
+% You already have RSA keys defined named CE2.lab.local.
+% They will be replaced.
+
+% The key modulus size is 2048 bits
+% Generating 2048 bit RSA keys, keys will be non-exportable...
+[OK] (elapsed time was 10 seconds)
+
+CE2(config)#vrf definition Mgmt-intf
+CE2(config-vrf)# address-family ipv4
+CE2(config-vrf-af)# exit-address-family
+CE2(config-vrf)#interface Ethernet1/3
+CE2(config-if)# description OOB Management
+CE2(config-if)# vrf forwarding Mgmt-intf
+CE2(config-if)# ip address 10.1.1.8 255.255.255.0
+CE2(config-if)# no shutdown
+CE2(config-if)#ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 10.1.1.254
+CE2(config)#line vty 0 4
+CE2(config-line)# login local
+CE2(config-line)# transport input ssh
+CE2(config-line)#ntp server 10.1.1.254 source Ethernet1/3
+CE2(config)#logging source-interface Ethernet1/3 vrf Mgmt-intf
+CE2(config)#logging facility local6
+CE2(config)#logging host 10.1.1.254 vrf Mgmt-intf
+CE2(config)#interface Loopback0
+CE2(config-if)# description Router ID
+CE2(config-if)# ip address 88.88.88.88 255.255.255.255
+CE2(config-if)# no shutdown
+CE2(config-if)#interface Ethernet1/0
+CE2(config-if)# description link to PE2
+CE2(config-if)# ip address 172.1.28.8 255.255.255.0
+CE2(config-if)# no shutdown
+CE2(config-if)#ip prefix-list PE2-PREFIXES seq 10 permit 0.0.0.0/0 le 32
+CE2(config)#route-map PE2-IN permit 10
+CE2(config-route-map)# description Accept routes from PE2
+CE2(config-route-map)# match ip address prefix-list PE2-PREFIXES
+CE2(config-route-map)#route-map PE2-OUT permit 999
+CE2(config-route-map)# description Advertise CE2 prefixes to PE2
+CE2(config-route-map)#router bgp 65001
+CE2(config-router)# bgp router-id 88.88.88.88
+CE2(config-router)# bgp log-neighbor-changes
+CE2(config-router)# neighbor 172.1.28.1 remote-as 65
+CE2(config-router)# neighbor 172.1.28.1 description PE2
+CE2(config-router)# address-family ipv4
+CE2(config-router-af)#  neighbor 172.1.28.1 activate
+CE2(config-router-af)#  neighbor 172.1.28.1 route-map PE2-IN in
+CE2(config-router-af)#  neighbor 172.1.28.1 route-map PE2-OUT out
+CE2(config-router-af)#  no auto-summary
+CE2(config-router-af)# exit-address-family
+CE2(config-router)#end
+CE2#
+^^^^ END push_config ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* P1 ** changed : True *********************************************************
+vvvv push_config ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+---- netmiko_send_config ** changed : True ------------------------------------- INFO
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+P1(config)#hostname P1
+P1(config)#ip domain-name lab.local
+P1(config)#ip cef
+P1(config)#username admin privilege 15 secret admin
+P1(config)#ip ssh version 2
+P1(config)#crypto key generate rsa general-keys modulus 2048
+% You already have RSA keys defined named P1.lab.local.
+% They will be replaced.
+
+% The key modulus size is 2048 bits
+% Generating 2048 bit RSA keys, keys will be non-exportable...
+[OK] (elapsed time was 8 seconds)
+
+P1(config)#vrf definition Mgmt-intf
+P1(config-vrf)# address-family ipv4
+P1(config-vrf-af)# exit-address-family
+P1(config-vrf)#interface Ethernet1/3
+P1(config-if)# description OOB Management
+P1(config-if)# vrf forwarding Mgmt-intf
+P1(config-if)# ip address 10.1.1.2 255.255.255.0
+P1(config-if)# no shutdown
+P1(config-if)#ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 10.1.1.254
+P1(config)#line vty 0 4
+P1(config-line)# login local
+P1(config-line)# transport input ssh
+P1(config-line)#ntp server 10.1.1.254 source Ethernet1/3
+P1(config)#logging source-interface Ethernet1/3 vrf Mgmt-intf
+P1(config)#logging facility local6
+P1(config)#logging host 10.1.1.254 vrf Mgmt-intf
+P1(config)#interface Loopback0
+P1(config-if)# description Router ID
+P1(config-if)# ip address 2.2.2.2 255.255.255.255
+P1(config-if)# ip ospf 1 area 0
+P1(config-if)# no shutdown
+P1(config-if)#interface Ethernet0/0
+P1(config-if)# description link to PE1
+P1(config-if)# ip address 10.1.2.2 255.255.255.0
+P1(config-if)# ip ospf network point-to-point
+P1(config-if)# ip ospf 1 area 0
+P1(config-if)# ip ospf authentication message-digest
+P1(config-if)# ip ospf message-digest-key 1 md5 ospf@lab123
+% OSPF Ethernet0/0: Key 1 already exists
+P1(config-if)# mpls ip
+P1(config-if)# no shutdown
+P1(config-if)#interface Ethernet0/1
+P1(config-if)# description link to P2
+P1(config-if)# ip address 10.2.3.2 255.255.255.0
+P1(config-if)# ip ospf network point-to-point
+P1(config-if)# ip ospf 1 area 0
+P1(config-if)# ip ospf authentication message-digest
+P1(config-if)# ip ospf message-digest-key 1 md5 ospf@lab123
+% OSPF Ethernet0/1: Key 1 already exists
+P1(config-if)# mpls ip
+P1(config-if)# no shutdown
+P1(config-if)#interface Ethernet0/2
+P1(config-if)# description link to RR1
+P1(config-if)# ip address 10.2.5.2 255.255.255.0
+P1(config-if)# ip ospf network point-to-point
+P1(config-if)# ip ospf 1 area 0
+P1(config-if)# ip ospf authentication message-digest
+P1(config-if)# ip ospf message-digest-key 1 md5 ospf@lab123
+% OSPF Ethernet0/2: Key 1 already exists
+P1(config-if)# mpls ip
+P1(config-if)# no shutdown
+P1(config-if)#router ospf 1
+P1(config-router)# router-id 2.2.2.2
+P1(config-router)# auto-cost reference-bandwidth 1000000
+P1(config-router)# passive-interface Loopback0
+P1(config-router)#mpls ip
+P1(config)#mpls label protocol ldp
+P1(config)#mpls ldp router-id Loopback0 force
+P1(config)#router bgp 65
+P1(config-router)# template peer-policy rr-peers-ipv4
+P1(config-router-ptmp)#  next-hop-self
+P1(config-router-ptmp)#  send-community both
+P1(config-router-ptmp)# exit-peer-policy
+P1(config-router)# template peer-policy rr-peers-vpnv4
+P1(config-router-ptmp)#  next-hop-self
+P1(config-router-ptmp)#  send-community both
+P1(config-router-ptmp)# exit-peer-policy
+P1(config-router)# template peer-session rr-peers
+P1(config-router-stmp)#  remote-as 65
+P1(config-router-stmp)#  description RR Peers
+P1(config-router-stmp)#  password cisco
+P1(config-router-stmp)#  update-source Loopback0
+P1(config-router-stmp)#  timers 30 90
+P1(config-router-stmp)#  fall-over
+P1(config-router-stmp)# exit-peer-session
+P1(config-router)# bgp router-id 2.2.2.2
+P1(config-router)# no bgp default ipv4-unicast
+P1(config-router)# bgp log-neighbor-changes
+P1(config-router)# bgp graceful-restart restart-time 120
+P1(config-router)# bgp graceful-restart stalepath-time 360
+P1(config-router)# bgp graceful-restart
+P1(config-router)# neighbor 5.5.5.5 inherit peer-session rr-peers
+P1(config-router)# neighbor 5.5.5.5 description RR1
+P1(config-router)# neighbor 6.6.6.6 inherit peer-session rr-peers
+P1(config-router)# neighbor 6.6.6.6 description RR2
+P1(config-router)# address-family ipv4
+P1(config-router-af)#  no synchronization
+P1(config-router-af)#  neighbor 5.5.5.5 activate
+P1(config-router-af)#  neighbor 5.5.5.5 inherit peer-policy rr-peers-ipv4
+P1(config-router-af)#  neighbor 6.6.6.6 activate
+P1(config-router-af)#  neighbor 6.6.6.6 inherit peer-policy rr-peers-ipv4
+P1(config-router-af)#  no auto-summary
+P1(config-router-af)# exit-address-family
+P1(config-router)#end
+P1#
+^^^^ END push_config ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* P2 ** changed : True *********************************************************
+vvvv push_config ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+---- netmiko_send_config ** changed : True ------------------------------------- INFO
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+P2(config)#hostname P2
+P2(config)#ip domain-name lab.local
+P2(config)#ip cef
+P2(config)#username admin privilege 15 secret admin
+P2(config)#ip ssh version 2
+P2(config)#crypto key generate rsa general-keys modulus 2048
+% You already have RSA keys defined named P2.lab.local.
+% They will be replaced.
+
+% The key modulus size is 2048 bits
+% Generating 2048 bit RSA keys, keys will be non-exportable...
+[OK] (elapsed time was 2 seconds)
+
+P2(config)#vrf definition Mgmt-intf
+P2(config-vrf)# address-family ipv4
+P2(config-vrf-af)# exit-address-family
+P2(config-vrf)#interface Ethernet1/3
+P2(config-if)# description OOB Management
+P2(config-if)# vrf forwarding Mgmt-intf
+P2(config-if)# ip address 10.1.1.3 255.255.255.0
+P2(config-if)# no shutdown
+P2(config-if)#ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 10.1.1.254
+P2(config)#line vty 0 4
+P2(config-line)# login local
+P2(config-line)# transport input ssh
+P2(config-line)#ntp server 10.1.1.254 source Ethernet1/3
+P2(config)#logging source-interface Ethernet1/3 vrf Mgmt-intf
+P2(config)#logging facility local6
+P2(config)#logging host 10.1.1.254 vrf Mgmt-intf
+P2(config)#interface Loopback0
+P2(config-if)# description Router ID
+P2(config-if)# ip address 3.3.3.3 255.255.255.255
+P2(config-if)# ip ospf 1 area 0
+P2(config-if)# no shutdown
+P2(config-if)#interface Ethernet0/0
+P2(config-if)# description link to PE2
+P2(config-if)# ip address 10.3.4.3 255.255.255.0
+P2(config-if)# ip ospf network point-to-point
+P2(config-if)# ip ospf 1 area 0
+P2(config-if)# ip ospf authentication message-digest
+P2(config-if)# ip ospf message-digest-key 1 md5 ospf@lab123
+% OSPF Ethernet0/0: Key 1 already exists
+P2(config-if)# mpls ip
+P2(config-if)# no shutdown
+P2(config-if)#interface Ethernet0/1
+P2(config-if)# description link to P1
+P2(config-if)# ip address 10.2.3.3 255.255.255.0
+P2(config-if)# ip ospf network point-to-point
+P2(config-if)# ip ospf 1 area 0
+P2(config-if)# ip ospf authentication message-digest
+P2(config-if)# ip ospf message-digest-key 1 md5 ospf@lab123
+% OSPF Ethernet0/1: Key 1 already exists
+P2(config-if)# mpls ip
+P2(config-if)# no shutdown
+P2(config-if)#interface Ethernet0/2
+P2(config-if)# description link to RR2
+P2(config-if)# ip address 10.3.6.3 255.255.255.0
+P2(config-if)# ip ospf network point-to-point
+P2(config-if)# ip ospf 1 area 0
+P2(config-if)# ip ospf authentication message-digest
+P2(config-if)# ip ospf message-digest-key 1 md5 ospf@lab123
+% OSPF Ethernet0/2: Key 1 already exists
+P2(config-if)# mpls ip
+P2(config-if)# no shutdown
+P2(config-if)#router ospf 1
+P2(config-router)# router-id 3.3.3.3
+P2(config-router)# auto-cost reference-bandwidth 1000000
+P2(config-router)# passive-interface Loopback0
+P2(config-router)#mpls ip
+P2(config)#mpls label protocol ldp
+P2(config)#mpls ldp router-id Loopback0 force
+P2(config)#router bgp 65
+P2(config-router)# template peer-policy rr-peers-ipv4
+P2(config-router-ptmp)#  next-hop-self
+P2(config-router-ptmp)#  send-community both
+P2(config-router-ptmp)# exit-peer-policy
+P2(config-router)# template peer-policy rr-peers-vpnv4
+P2(config-router-ptmp)#  next-hop-self
+P2(config-router-ptmp)#  send-community both
+P2(config-router-ptmp)# exit-peer-policy
+P2(config-router)# template peer-session rr-peers
+P2(config-router-stmp)#  remote-as 65
+P2(config-router-stmp)#  description RR Peers
+P2(config-router-stmp)#  password cisco
+P2(config-router-stmp)#  update-source Loopback0
+P2(config-router-stmp)#  timers 30 90
+P2(config-router-stmp)#  fall-over
+P2(config-router-stmp)# exit-peer-session
+P2(config-router)# bgp router-id 3.3.3.3
+P2(config-router)# no bgp default ipv4-unicast
+P2(config-router)# bgp log-neighbor-changes
+P2(config-router)# bgp graceful-restart restart-time 120
+P2(config-router)# bgp graceful-restart stalepath-time 360
+P2(config-router)# bgp graceful-restart
+P2(config-router)# neighbor 5.5.5.5 inherit peer-session rr-peers
+P2(config-router)# neighbor 5.5.5.5 description RR1
+P2(config-router)# neighbor 6.6.6.6 inherit peer-session rr-peers
+P2(config-router)# neighbor 6.6.6.6 description RR2
+P2(config-router)# address-family ipv4
+P2(config-router-af)#  no synchronization
+P2(config-router-af)#  neighbor 5.5.5.5 activate
+P2(config-router-af)#  neighbor 5.5.5.5 inherit peer-policy rr-peers-ipv4
+P2(config-router-af)#  neighbor 6.6.6.6 activate
+P2(config-router-af)#  neighbor 6.6.6.6 inherit peer-policy rr-peers-ipv4
+P2(config-router-af)#  no auto-summary
+P2(config-router-af)# exit-address-family
+P2(config-router)#end
+P2#
+^^^^ END push_config ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* PE1 ** changed : True ********************************************************
+vvvv push_config ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+---- netmiko_send_config ** changed : True ------------------------------------- INFO
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+PE1(config)#hostname PE1
+PE1(config)#ip domain-name lab.local
+PE1(config)#ip cef
+PE1(config)#username admin privilege 15 secret admin
+PE1(config)#ip ssh version 2
+PE1(config)#crypto key generate rsa general-keys modulus 2048
+% You already have RSA keys defined named PE1.lab.local.
+% They will be replaced.
+
+% The key modulus size is 2048 bits
+% Generating 2048 bit RSA keys, keys will be non-exportable...
+[OK] (elapsed time was 4 seconds)
+
+PE1(config)#vrf definition Mgmt-intf
+PE1(config-vrf)# address-family ipv4
+PE1(config-vrf-af)# exit-address-family
+PE1(config-vrf)#interface Ethernet1/3
+PE1(config-if)# description OOB Management
+PE1(config-if)# vrf forwarding Mgmt-intf
+PE1(config-if)# ip address 10.1.1.1 255.255.255.0
+PE1(config-if)# no shutdown
+PE1(config-if)#ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 10.1.1.254
+PE1(config)#line vty 0 4
+PE1(config-line)# login local
+PE1(config-line)# transport input ssh
+PE1(config-line)#ntp server 10.1.1.254 source Ethernet1/3
+PE1(config)#logging source-interface Ethernet1/3 vrf Mgmt-intf
+PE1(config)#logging facility local6
+PE1(config)#logging host 10.1.1.254 vrf Mgmt-intf
+PE1(config)#vrf definition VRF_A
+PE1(config-vrf)# rd 65:65001
+PE1(config-vrf)# route-target export 65:65001
+PE1(config-vrf)# route-target import 65:65001
+PE1(config-vrf)# address-family ipv4
+PE1(config-vrf-af)# exit-address-family
+PE1(config-vrf)#interface Loopback0
+PE1(config-if)# description Router ID
+PE1(config-if)# ip address 1.1.1.1 255.255.255.255
+PE1(config-if)# ip ospf 1 area 0
+PE1(config-if)# no shutdown
+PE1(config-if)#interface Ethernet0/0
+PE1(config-if)# description link to P1
+PE1(config-if)# ip address 10.1.2.1 255.255.255.0
+PE1(config-if)# ip ospf network point-to-point
+PE1(config-if)# ip ospf 1 area 0
+PE1(config-if)# ip ospf authentication message-digest
+PE1(config-if)# ip ospf message-digest-key 1 md5 ospf@lab123
+% OSPF Ethernet0/0: Key 1 already exists
+PE1(config-if)# mpls ip
+PE1(config-if)# no shutdown
+PE1(config-if)#interface Ethernet1/0
+PE1(config-if)# description VRF A to CE1
+PE1(config-if)# vrf forwarding VRF_A
+PE1(config-if)# ip address 172.1.17.1 255.255.255.0
+PE1(config-if)# no shutdown
+PE1(config-if)#router ospf 1
+PE1(config-router)# router-id 1.1.1.1
+PE1(config-router)# auto-cost reference-bandwidth 1000000
+PE1(config-router)# passive-interface Loopback0
+PE1(config-router)#mpls ip
+PE1(config)#mpls label protocol ldp
+PE1(config)#mpls ldp router-id Loopback0 force
+PE1(config)#router bgp 65
+PE1(config-router)# template peer-policy rr-peers-ipv4
+PE1(config-router-ptmp)#  next-hop-self
+PE1(config-router-ptmp)#  send-community both
+PE1(config-router-ptmp)# exit-peer-policy
+PE1(config-router)# template peer-policy rr-peers-vpnv4
+PE1(config-router-ptmp)#  next-hop-self
+PE1(config-router-ptmp)#  send-community both
+PE1(config-router-ptmp)# exit-peer-policy
+PE1(config-router)# template peer-session rr-peers
+PE1(config-router-stmp)#  remote-as 65
+PE1(config-router-stmp)#  description RR Peers
+PE1(config-router-stmp)#  password cisco
+PE1(config-router-stmp)#  update-source Loopback0
+PE1(config-router-stmp)#  timers 30 90
+PE1(config-router-stmp)#  fall-over
+PE1(config-router-stmp)# exit-peer-session
+PE1(config-router)# bgp router-id 1.1.1.1
+PE1(config-router)# no bgp default ipv4-unicast
+PE1(config-router)# bgp log-neighbor-changes
+PE1(config-router)# bgp graceful-restart restart-time 120
+PE1(config-router)# bgp graceful-restart stalepath-time 360
+PE1(config-router)# bgp graceful-restart
+PE1(config-router)# neighbor 5.5.5.5 inherit peer-session rr-peers
+PE1(config-router)# neighbor 5.5.5.5 description RR1
+PE1(config-router)# neighbor 6.6.6.6 inherit peer-session rr-peers
+PE1(config-router)# neighbor 6.6.6.6 description RR2
+PE1(config-router)# address-family ipv4
+PE1(config-router-af)#  no synchronization
+PE1(config-router-af)#  neighbor 5.5.5.5 activate
+PE1(config-router-af)#  neighbor 5.5.5.5 inherit peer-policy rr-peers-ipv4
+PE1(config-router-af)#  neighbor 6.6.6.6 activate
+PE1(config-router-af)#  neighbor 6.6.6.6 inherit peer-policy rr-peers-ipv4
+PE1(config-router-af)#  no auto-summary
+PE1(config-router-af)# exit-address-family
+PE1(config-router)#address-family vpnv4
+PE1(config-router-af)#  neighbor 5.5.5.5 activate
+PE1(config-router-af)#  neighbor 5.5.5.5 send-community extended
+PE1(config-router-af)#  neighbor 5.5.5.5 inherit peer-policy rr-peers-vpnv4
+PE1(config-router-af)#  neighbor 6.6.6.6 activate
+PE1(config-router-af)#  neighbor 6.6.6.6 send-community extended
+PE1(config-router-af)#  neighbor 6.6.6.6 inherit peer-policy rr-peers-vpnv4
+PE1(config-router-af)# exit-address-family
+PE1(config-router)#address-family ipv4 vrf VRF_A
+PE1(config-router-af)#  neighbor 172.1.17.7 remote-as 65001
+PE1(config-router-af)#  neighbor 172.1.17.7 activate
+PE1(config-router-af)#  neighbor 172.1.17.7 description CE1
+PE1(config-router-af)#  neighbor 172.1.17.7 as-override
+PE1(config-router-af)#  neighbor 172.1.17.7 route-map CE1-IN in
+PE1(config-router-af)#  neighbor 172.1.17.7 route-map CE1-OUT out
+PE1(config-router-af)#  no synchronization
+PE1(config-router-af)#exit-address-family
+PE1(config-router)#ip prefix-list CE1-PREFIXES seq 10 permit 77.77.77.77/32
+PE1(config)#ip prefix-list CE1-PREFIXES seq 20 permit 172.1.17.0/24
+PE1(config)#route-map CE1-IN permit 10
+PE1(config-route-map)# description Accept CE1 prefixes
+PE1(config-route-map)# match ip address prefix-list CE1-PREFIXES
+PE1(config-route-map)#route-map CE1-OUT permit 999
+PE1(config-route-map)# description Advertise VRF_A routes to CE1
+PE1(config-route-map)#end
+PE1#
+^^^^ END push_config ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* PE2 ** changed : True ********************************************************
+vvvv push_config ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+---- netmiko_send_config ** changed : True ------------------------------------- INFO
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+PE2(config)#hostname PE2
+PE2(config)#ip domain-name lab.local
+PE2(config)#ip cef
+PE2(config)#username admin privilege 15 secret admin
+PE2(config)#ip ssh version 2
+PE2(config)#crypto key generate rsa general-keys modulus 2048
+% You already have RSA keys defined named PE2.lab.local.
+% They will be replaced.
+
+% The key modulus size is 2048 bits
+% Generating 2048 bit RSA keys, keys will be non-exportable...
+[OK] (elapsed time was 2 seconds)
+
+PE2(config)#vrf definition Mgmt-intf
+PE2(config-vrf)# address-family ipv4
+PE2(config-vrf-af)# exit-address-family
+PE2(config-vrf)#interface Ethernet1/3
+PE2(config-if)# description OOB Management
+PE2(config-if)# vrf forwarding Mgmt-intf
+PE2(config-if)# ip address 10.1.1.4 255.255.255.0
+PE2(config-if)# no shutdown
+PE2(config-if)#ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 10.1.1.254
+PE2(config)#line vty 0 4
+PE2(config-line)# login local
+PE2(config-line)# transport input ssh
+PE2(config-line)#ntp server 10.1.1.254 source Ethernet1/3
+PE2(config)#logging source-interface Ethernet1/3 vrf Mgmt-intf
+PE2(config)#logging facility local6
+PE2(config)#logging host 10.1.1.254 vrf Mgmt-intf
+PE2(config)#vrf definition VRF_A
+PE2(config-vrf)# rd 65:65001
+PE2(config-vrf)# route-target export 65:65001
+PE2(config-vrf)# route-target import 65:65001
+PE2(config-vrf)# address-family ipv4
+PE2(config-vrf-af)# exit-address-family
+PE2(config-vrf)#interface Loopback0
+PE2(config-if)# description Router ID
+PE2(config-if)# ip address 4.4.4.4 255.255.255.255
+PE2(config-if)# ip ospf 1 area 0
+PE2(config-if)# no shutdown
+PE2(config-if)#interface Ethernet0/0
+PE2(config-if)# description link to P2
+PE2(config-if)# ip address 10.3.4.4 255.255.255.0
+PE2(config-if)# ip ospf network point-to-point
+PE2(config-if)# ip ospf 1 area 0
+PE2(config-if)# ip ospf authentication message-digest
+PE2(config-if)# ip ospf message-digest-key 1 md5 ospf@lab123
+% OSPF Ethernet0/0: Key 1 already exists
+PE2(config-if)# mpls ip
+PE2(config-if)# no shutdown
+PE2(config-if)#interface Ethernet1/0
+PE2(config-if)# description VRF A to CE2
+PE2(config-if)# vrf forwarding VRF_A
+PE2(config-if)# ip address 172.1.48.4 255.255.255.0
+PE2(config-if)# no shutdown
+PE2(config-if)#router ospf 1
+PE2(config-router)# router-id 4.4.4.4
+PE2(config-router)# auto-cost reference-bandwidth 1000000
+PE2(config-router)# passive-interface Loopback0
+PE2(config-router)#mpls ip
+PE2(config)#mpls label protocol ldp
+PE2(config)#mpls ldp router-id Loopback0 force
+PE2(config)#router bgp 65
+PE2(config-router)# template peer-policy rr-peers-ipv4
+PE2(config-router-ptmp)#  next-hop-self
+PE2(config-router-ptmp)#  send-community both
+PE2(config-router-ptmp)# exit-peer-policy
+PE2(config-router)# template peer-policy rr-peers-vpnv4
+PE2(config-router-ptmp)#  next-hop-self
+PE2(config-router-ptmp)#  send-community both
+PE2(config-router-ptmp)# exit-peer-policy
+PE2(config-router)# template peer-session rr-peers
+PE2(config-router-stmp)#  remote-as 65
+PE2(config-router-stmp)#  description RR Peers
+PE2(config-router-stmp)#  password cisco
+PE2(config-router-stmp)#  update-source Loopback0
+PE2(config-router-stmp)#  timers 30 90
+PE2(config-router-stmp)#  fall-over
+PE2(config-router-stmp)# exit-peer-session
+PE2(config-router)# bgp router-id 4.4.4.4
+PE2(config-router)# no bgp default ipv4-unicast
+PE2(config-router)# bgp log-neighbor-changes
+PE2(config-router)# bgp graceful-restart restart-time 120
+PE2(config-router)# bgp graceful-restart stalepath-time 360
+PE2(config-router)# bgp graceful-restart
+PE2(config-router)# neighbor 5.5.5.5 inherit peer-session rr-peers
+PE2(config-router)# neighbor 5.5.5.5 description RR1
+PE2(config-router)# neighbor 6.6.6.6 inherit peer-session rr-peers
+PE2(config-router)# neighbor 6.6.6.6 description RR2
+PE2(config-router)# address-family ipv4
+PE2(config-router-af)#  no synchronization
+PE2(config-router-af)#  neighbor 5.5.5.5 activate
+PE2(config-router-af)#  neighbor 5.5.5.5 inherit peer-policy rr-peers-ipv4
+PE2(config-router-af)#  neighbor 6.6.6.6 activate
+PE2(config-router-af)#  neighbor 6.6.6.6 inherit peer-policy rr-peers-ipv4
+PE2(config-router-af)#  no auto-summary
+PE2(config-router-af)# exit-address-family
+PE2(config-router)#address-family vpnv4
+PE2(config-router-af)#  neighbor 5.5.5.5 activate
+PE2(config-router-af)#  neighbor 5.5.5.5 send-community extended
+PE2(config-router-af)#  neighbor 5.5.5.5 inherit peer-policy rr-peers-vpnv4
+PE2(config-router-af)#  neighbor 6.6.6.6 activate
+PE2(config-router-af)#  neighbor 6.6.6.6 send-community extended
+PE2(config-router-af)#  neighbor 6.6.6.6 inherit peer-policy rr-peers-vpnv4
+PE2(config-router-af)# exit-address-family
+PE2(config-router)#address-family ipv4 vrf VRF_A
+PE2(config-router-af)#  neighbor 172.1.28.8 remote-as 65001
+PE2(config-router-af)#  neighbor 172.1.28.8 activate
+PE2(config-router-af)#  neighbor 172.1.28.8 description CE2
+PE2(config-router-af)#  neighbor 172.1.28.8 as-override
+PE2(config-router-af)#  neighbor 172.1.28.8 route-map CE2-IN in
+PE2(config-router-af)#  neighbor 172.1.28.8 route-map CE2-OUT out
+PE2(config-router-af)#  no synchronization
+PE2(config-router-af)#exit-address-family
+PE2(config-router)#ip prefix-list CE2-PREFIXES seq 10 permit 88.88.88.88/32
+PE2(config)#ip prefix-list CE2-PREFIXES seq 20 permit 172.1.48.0/24
+PE2(config)#route-map CE2-IN permit 10
+PE2(config-route-map)# description Accept CE2 prefixes
+PE2(config-route-map)# match ip address prefix-list CE2-PREFIXES
+PE2(config-route-map)#route-map CE2-OUT permit 999
+PE2(config-route-map)# description Advertise VRF_A routes to CE2
+PE2(config-route-map)#end
+PE2#
+^^^^ END push_config ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* RR1 ** changed : True ********************************************************
+vvvv push_config ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+---- netmiko_send_config ** changed : True ------------------------------------- INFO
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+RR1(config)#hostname RR1
+RR1(config)#ip domain-name lab.local
+RR1(config)#ip cef
+RR1(config)#username admin privilege 15 secret admin
+RR1(config)#ip ssh version 2
+RR1(config)#crypto key generate rsa general-keys modulus 2048
+% You already have RSA keys defined named RR1.lab.local.
+% They will be replaced.
+
+% The key modulus size is 2048 bits
+% Generating 2048 bit RSA keys, keys will be non-exportable...
+[OK] (elapsed time was 1 seconds)
+
+RR1(config)#vrf definition Mgmt-intf
+RR1(config-vrf)# address-family ipv4
+RR1(config-vrf-af)# exit-address-family
+RR1(config-vrf)#interface Ethernet1/3
+RR1(config-if)# description OOB Management
+RR1(config-if)# vrf forwarding Mgmt-intf
+RR1(config-if)# ip address 10.1.1.5 255.255.255.0
+RR1(config-if)# no shutdown
+RR1(config-if)#ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 10.1.1.254
+RR1(config)#line vty 0 4
+RR1(config-line)# login local
+RR1(config-line)# transport input ssh
+RR1(config-line)#ntp server 10.1.1.254 source Ethernet1/3
+RR1(config)#logging source-interface Ethernet1/3 vrf Mgmt-intf
+RR1(config)#logging facility local6
+RR1(config)#logging host 10.1.1.254 vrf Mgmt-intf
+RR1(config)#interface Loopback0
+RR1(config-if)# description Router ID
+RR1(config-if)# ip address 5.5.5.5 255.255.255.255
+RR1(config-if)# ip ospf 1 area 0
+RR1(config-if)# no shutdown
+RR1(config-if)#interface Ethernet0/2
+RR1(config-if)# description link to P1
+RR1(config-if)# ip address 10.2.5.5 255.255.255.0
+RR1(config-if)# ip ospf network point-to-point
+RR1(config-if)# ip ospf 1 area 0
+RR1(config-if)# ip ospf authentication message-digest
+RR1(config-if)# ip ospf message-digest-key 1 md5 ospf@lab123
+% OSPF Ethernet0/2: Key 1 already exists
+RR1(config-if)# mpls ip
+RR1(config-if)# no shutdown
+RR1(config-if)#router ospf 1
+RR1(config-router)# router-id 5.5.5.5
+RR1(config-router)# auto-cost reference-bandwidth 1000000
+RR1(config-router)# passive-interface Loopback0
+RR1(config-router)#mpls ip
+RR1(config)#mpls label protocol ldp
+RR1(config)#mpls ldp router-id Loopback0 force
+RR1(config)#router bgp 65
+RR1(config-router)# template peer-policy edge-rr-clients-ipv4
+RR1(config-router-ptmp)#  send-community both
+RR1(config-router-ptmp)#  route-reflector-client
+RR1(config-router-ptmp)# exit-peer-policy
+RR1(config-router)# template peer-policy edge-rr-clients-vpnv4
+RR1(config-router-ptmp)#  send-community both
+RR1(config-router-ptmp)#  route-reflector-client
+RR1(config-router-ptmp)# exit-peer-policy
+RR1(config-router)# template peer-policy core-rr-clients-ipv4
+RR1(config-router-ptmp)#  send-community both
+RR1(config-router-ptmp)#  route-reflector-client
+RR1(config-router-ptmp)# exit-peer-policy
+RR1(config-router)# template peer-policy rr-other-ipv4
+RR1(config-router-ptmp)#  send-community both
+RR1(config-router-ptmp)# exit-peer-policy
+RR1(config-router)# template peer-policy rr-other-vpnv4
+RR1(config-router-ptmp)#  send-community both
+RR1(config-router-ptmp)# exit-peer-policy
+RR1(config-router)# template peer-session edge-rr-clients
+RR1(config-router-stmp)#  remote-as 65
+RR1(config-router-stmp)#  description Edge RR Clients
+RR1(config-router-stmp)#  password cisco
+RR1(config-router-stmp)#  update-source Loopback0
+RR1(config-router-stmp)#  timers 30 90
+RR1(config-router-stmp)#  fall-over
+RR1(config-router-stmp)# exit-peer-session
+RR1(config-router)# template peer-session core-rr-clients
+RR1(config-router-stmp)#  remote-as 65
+RR1(config-router-stmp)#  description Core RR Clients
+RR1(config-router-stmp)#  password cisco
+RR1(config-router-stmp)#  update-source Loopback0
+RR1(config-router-stmp)#  timers 30 90
+RR1(config-router-stmp)#  fall-over
+RR1(config-router-stmp)# exit-peer-session
+RR1(config-router)# template peer-session rr-other
+RR1(config-router-stmp)#  remote-as 65
+RR1(config-router-stmp)#  description Other RR Clients
+RR1(config-router-stmp)#  password cisco
+RR1(config-router-stmp)#  update-source Loopback0
+RR1(config-router-stmp)#  timers 30 90
+RR1(config-router-stmp)#  fall-over
+RR1(config-router-stmp)# exit-peer-session
+RR1(config-router)# bgp router-id 5.5.5.5
+RR1(config-router)# no bgp default ipv4-unicast
+RR1(config-router)# bgp log-neighbor-changes
+RR1(config-router)# bgp graceful-restart restart-time 120
+RR1(config-router)# bgp graceful-restart stalepath-time 360
+RR1(config-router)# bgp graceful-restart
+RR1(config-router)# neighbor 1.1.1.1 inherit peer-session edge-rr-clients
+RR1(config-router)# neighbor 1.1.1.1 description PE1
+RR1(config-router)# neighbor 4.4.4.4 inherit peer-session edge-rr-clients
+RR1(config-router)# neighbor 4.4.4.4 description PE2
+RR1(config-router)# neighbor 2.2.2.2 inherit peer-session core-rr-clients
+RR1(config-router)# neighbor 2.2.2.2 description P1
+RR1(config-router)# neighbor 3.3.3.3 inherit peer-session core-rr-clients
+RR1(config-router)# neighbor 3.3.3.3 description P2
+RR1(config-router)# neighbor 6.6.6.6 inherit peer-session rr-other
+RR1(config-router)# neighbor 6.6.6.6 description RR2
+RR1(config-router)# address-family ipv4
+RR1(config-router-af)#  no synchronization
+RR1(config-router-af)#  neighbor 1.1.1.1 activate
+RR1(config-router-af)#  neighbor 1.1.1.1 inherit peer-policy edge-rr-clients-ipv4
+RR1(config-router-af)#  neighbor 4.4.4.4 activate
+RR1(config-router-af)#  neighbor 4.4.4.4 inherit peer-policy edge-rr-clients-ipv4
+RR1(config-router-af)#  neighbor 2.2.2.2 activate
+RR1(config-router-af)#  neighbor 2.2.2.2 inherit peer-policy core-rr-clients-ipv4
+RR1(config-router-af)#  neighbor 3.3.3.3 activate
+RR1(config-router-af)#  neighbor 3.3.3.3 inherit peer-policy core-rr-clients-ipv4
+RR1(config-router-af)#  neighbor 6.6.6.6 activate
+RR1(config-router-af)#  neighbor 6.6.6.6 inherit peer-policy rr-other-ipv4
+RR1(config-router-af)#  no auto-summary
+RR1(config-router-af)# exit-address-family
+RR1(config-router)#address-family vpnv4
+RR1(config-router-af)#  neighbor 1.1.1.1 activate
+RR1(config-router-af)#  neighbor 1.1.1.1 send-community extended
+RR1(config-router-af)#  neighbor 1.1.1.1 inherit peer-policy edge-rr-clients-vpnv4
+RR1(config-router-af)#  neighbor 4.4.4.4 activate
+RR1(config-router-af)#  neighbor 4.4.4.4 send-community extended
+RR1(config-router-af)#  neighbor 4.4.4.4 inherit peer-policy edge-rr-clients-vpnv4
+RR1(config-router-af)#  neighbor 6.6.6.6 activate
+RR1(config-router-af)#  neighbor 6.6.6.6 send-community extended
+RR1(config-router-af)#  neighbor 6.6.6.6 inherit peer-policy rr-other-vpnv4
+RR1(config-router-af)# exit-address-family
+RR1(config-router)#end
+RR1#
+^^^^ END push_config ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* RR2 ** changed : True ********************************************************
+vvvv push_config ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+---- netmiko_send_config ** changed : True ------------------------------------- INFO
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+RR2(config)#hostname RR2
+RR2(config)#ip domain-name lab.local
+RR2(config)#ip cef
+RR2(config)#username admin privilege 15 secret admin
+RR2(config)#ip ssh version 2
+RR2(config)#crypto key generate rsa general-keys modulus 2048
+% You already have RSA keys defined named RR2.lab.local.
+% They will be replaced.
+
+% The key modulus size is 2048 bits
+% Generating 2048 bit RSA keys, keys will be non-exportable...
+[OK] (elapsed time was 14 seconds)
+
+RR2(config)#vrf definition Mgmt-intf
+RR2(config-vrf)# address-family ipv4
+RR2(config-vrf-af)# exit-address-family
+RR2(config-vrf)#interface Ethernet1/3
+RR2(config-if)# description OOB Management
+RR2(config-if)# vrf forwarding Mgmt-intf
+RR2(config-if)# ip address 10.1.1.6 255.255.255.0
+RR2(config-if)# no shutdown
+RR2(config-if)#ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 10.1.1.254
+RR2(config)#line vty 0 4
+RR2(config-line)# login local
+RR2(config-line)# transport input ssh
+RR2(config-line)#ntp server 10.1.1.254 source Ethernet1/3
+RR2(config)#logging source-interface Ethernet1/3 vrf Mgmt-intf
+RR2(config)#logging facility local6
+RR2(config)#logging host 10.1.1.254 vrf Mgmt-intf
+RR2(config)#interface Loopback0
+RR2(config-if)# description Router ID
+RR2(config-if)# ip address 6.6.6.6 255.255.255.255
+RR2(config-if)# ip ospf 1 area 0
+RR2(config-if)# no shutdown
+RR2(config-if)#interface Ethernet0/2
+RR2(config-if)# description link to P2
+RR2(config-if)# ip address 10.3.6.6 255.255.255.0
+RR2(config-if)# ip ospf network point-to-point
+RR2(config-if)# ip ospf 1 area 0
+RR2(config-if)# ip ospf authentication message-digest
+RR2(config-if)# ip ospf message-digest-key 1 md5 ospf@lab123
+% OSPF Ethernet0/2: Key 1 already exists
+RR2(config-if)# mpls ip
+RR2(config-if)# no shutdown
+RR2(config-if)#router ospf 1
+RR2(config-router)# router-id 6.6.6.6
+RR2(config-router)# auto-cost reference-bandwidth 1000000
+RR2(config-router)# passive-interface Loopback0
+RR2(config-router)#mpls ip
+RR2(config)#mpls label protocol ldp
+RR2(config)#mpls ldp router-id Loopback0 force
+RR2(config)#router bgp 65
+RR2(config-router)# template peer-policy edge-rr-clients-ipv4
+RR2(config-router-ptmp)#  send-community both
+RR2(config-router-ptmp)#  route-reflector-client
+RR2(config-router-ptmp)# exit-peer-policy
+RR2(config-router)# template peer-policy edge-rr-clients-vpnv4
+RR2(config-router-ptmp)#  send-community both
+RR2(config-router-ptmp)#  route-reflector-client
+RR2(config-router-ptmp)# exit-peer-policy
+RR2(config-router)# template peer-policy core-rr-clients-ipv4
+RR2(config-router-ptmp)#  send-community both
+RR2(config-router-ptmp)#  route-reflector-client
+RR2(config-router-ptmp)# exit-peer-policy
+RR2(config-router)# template peer-policy rr-other-ipv4
+RR2(config-router-ptmp)#  send-community both
+RR2(config-router-ptmp)# exit-peer-policy
+RR2(config-router)# template peer-policy rr-other-vpnv4
+RR2(config-router-ptmp)#  send-community both
+RR2(config-router-ptmp)# exit-peer-policy
+RR2(config-router)# template peer-session edge-rr-clients
+RR2(config-router-stmp)#  remote-as 65
+RR2(config-router-stmp)#  description Edge RR Clients
+RR2(config-router-stmp)#  password cisco
+RR2(config-router-stmp)#  update-source Loopback0
+RR2(config-router-stmp)#  timers 30 90
+RR2(config-router-stmp)#  fall-over
+RR2(config-router-stmp)# exit-peer-session
+RR2(config-router)# template peer-session core-rr-clients
+RR2(config-router-stmp)#  remote-as 65
+RR2(config-router-stmp)#  description Core RR Clients
+RR2(config-router-stmp)#  password cisco
+RR2(config-router-stmp)#  update-source Loopback0
+RR2(config-router-stmp)#  timers 30 90
+RR2(config-router-stmp)#  fall-over
+RR2(config-router-stmp)# exit-peer-session
+RR2(config-router)# template peer-session rr-other
+RR2(config-router-stmp)#  remote-as 65
+RR2(config-router-stmp)#  description Other RR Clients
+RR2(config-router-stmp)#  password cisco
+RR2(config-router-stmp)#  update-source Loopback0
+RR2(config-router-stmp)#  timers 30 90
+RR2(config-router-stmp)#  fall-over
+RR2(config-router-stmp)# exit-peer-session
+RR2(config-router)# bgp router-id 6.6.6.6
+RR2(config-router)# no bgp default ipv4-unicast
+RR2(config-router)# bgp log-neighbor-changes
+RR2(config-router)# bgp graceful-restart restart-time 120
+RR2(config-router)# bgp graceful-restart stalepath-time 360
+RR2(config-router)# bgp graceful-restart
+RR2(config-router)# neighbor 1.1.1.1 inherit peer-session edge-rr-clients
+RR2(config-router)# neighbor 1.1.1.1 description PE1
+RR2(config-router)# neighbor 4.4.4.4 inherit peer-session edge-rr-clients
+RR2(config-router)# neighbor 4.4.4.4 description PE2
+RR2(config-router)# neighbor 2.2.2.2 inherit peer-session core-rr-clients
+RR2(config-router)# neighbor 2.2.2.2 description P1
+RR2(config-router)# neighbor 3.3.3.3 inherit peer-session core-rr-clients
+RR2(config-router)# neighbor 3.3.3.3 description P2
+RR2(config-router)# neighbor 5.5.5.5 inherit peer-session rr-other
+RR2(config-router)# neighbor 5.5.5.5 description RR1
+RR2(config-router)# address-family ipv4
+RR2(config-router-af)#  no synchronization
+RR2(config-router-af)#  neighbor 1.1.1.1 activate
+RR2(config-router-af)#  neighbor 1.1.1.1 inherit peer-policy edge-rr-clients-ipv4
+RR2(config-router-af)#  neighbor 4.4.4.4 activate
+RR2(config-router-af)#  neighbor 4.4.4.4 inherit peer-policy edge-rr-clients-ipv4
+RR2(config-router-af)#  neighbor 2.2.2.2 activate
+RR2(config-router-af)#  neighbor 2.2.2.2 inherit peer-policy core-rr-clients-ipv4
+RR2(config-router-af)#  neighbor 3.3.3.3 activate
+RR2(config-router-af)#  neighbor 3.3.3.3 inherit peer-policy core-rr-clients-ipv4
+RR2(config-router-af)#  neighbor 5.5.5.5 activate
+RR2(config-router-af)#  neighbor 5.5.5.5 inherit peer-policy rr-other-ipv4
+RR2(config-router-af)#  no auto-summary
+RR2(config-router-af)# exit-address-family
+RR2(config-router)#address-family vpnv4
+RR2(config-router-af)#  neighbor 1.1.1.1 activate
+RR2(config-router-af)#  neighbor 1.1.1.1 send-community extended
+RR2(config-router-af)#  neighbor 1.1.1.1 inherit peer-policy edge-rr-clients-vpnv4
+RR2(config-router-af)#  neighbor 4.4.4.4 activate
+RR2(config-router-af)#  neighbor 4.4.4.4 send-community extended
+RR2(config-router-af)#  neighbor 4.4.4.4 inherit peer-policy edge-rr-clients-vpnv4
+RR2(config-router-af)#  neighbor 5.5.5.5 activate
+RR2(config-router-af)#  neighbor 5.5.5.5 send-community extended
+RR2(config-router-af)#  neighbor 5.5.5.5 inherit peer-policy rr-other-vpnv4
+RR2(config-router-af)# exit-address-family
+RR2(config-router)#end
+RR2#
+^^^^ END push_config ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(nornir-env) khau@nuc:~/nornir-env/mynornir-lab$ 

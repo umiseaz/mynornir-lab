@@ -35,8 +35,8 @@ router bgp {{ bgp.asn }}
 !
  {# ! --- iBGP neighbors --- #}
 {% for peer in bgp.ibgp_peers %}
- neighbor {{ peer.ip }} description {{ peer.description }}
  neighbor {{ peer.ip }} inherit peer-session {{ peer.peer_session }}
+ neighbor {{ peer.ip }} description {{ peer.description }}
 {% endfor %}
 !
  address-family ipv4
