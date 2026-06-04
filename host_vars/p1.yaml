@@ -16,7 +16,6 @@ mgmt:
 ospf:
   process_id: 1
   router_id: 2.2.2.2
-  reference_bandwidth: 1000000
   passive_interfaces:
     - Loopback0
 

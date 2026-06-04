@@ -1,6 +1,7 @@
 {% if bgp.pe_ce is defined and bgp.pe_ce %}
 {% for peer in bgp.ebgp_peers %}
 address-family ipv4 vrf {{ peer.vrf }}
+  redistribute connected
   neighbor {{ peer.ip }} remote-as {{ peer.remote_as }}
   neighbor {{ peer.ip }} activate
   neighbor {{ peer.ip }} description {{ peer.description }}

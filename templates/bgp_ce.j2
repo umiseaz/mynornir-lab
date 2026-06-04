@@ -1,4 +1,3 @@
-{% if role == 'ce' %}
 router bgp {{ bgp.asn }}
  bgp router-id {{ bgp.router_id }}
  bgp log-neighbor-changes
@@ -6,9 +5,12 @@ router bgp {{ bgp.asn }}
 {% for neighbor in bgp.neighbors %}
  neighbor {{ neighbor.ip }} remote-as {{ neighbor.remote_as }}
  neighbor {{ neighbor.ip }} description {{ neighbor.description }}
-!
 {% endfor %}
+!
  address-family ipv4
+{% for net in bgp.networks %}
+  network {{ net.prefix }} mask {{ net.mask }}
+{% endfor %}
 {% for neighbor in bgp.neighbors %}
   neighbor {{ neighbor.ip }} activate
   neighbor {{ neighbor.ip }} route-map {{ neighbor.route_map_in }} in
@@ -17,4 +19,3 @@ router bgp {{ bgp.asn }}
   no auto-summary
  exit-address-family
 !
-{% endif %}

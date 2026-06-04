@@ -1,0 +1,17 @@
+Host    : RR1
+Role    : rr
+IP      : 10.1.1.5
+Time    : 2026-06-04 12:56:08.933217
+============================================================
+
+>>> show ip ospf neighbor
+------------------------------------------------------------
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2           0   FULL/  -        00:00:39    10.2.5.2        Ethernet0/2
+
+>>> show ip ospf interface brief
+------------------------------------------------------------
+Interface    PID   Area            IP Address/Mask    Cost  State Nbrs F/C
+Lo0          1     0               5.5.5.5/32         1     LOOP  0/0
+Et0/2        1     0               10.2.5.5/24        10    P2P   1/1

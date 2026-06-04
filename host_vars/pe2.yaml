@@ -16,7 +16,6 @@ mgmt:
 ospf:
   process_id: 1
   router_id: 4.4.4.4
-  reference_bandwidth: 1000000
   passive_interfaces:
     - Loopback0
 
@@ -84,7 +83,7 @@ bgp:
       peer_policy_vpnv4: rr-peers-vpnv4
 
   ebgp_peers:
-    - ip: 172.1.28.8
+    - ip: 172.1.48.8
       remote_as: 65001
       description: "CE2"
       vrf: VRF_A

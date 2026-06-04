@@ -1,0 +1,17 @@
+Host    : PE2
+Role    : pe
+IP      : 10.1.1.4
+Time    : 2026-06-04 12:56:05.091874
+============================================================
+
+>>> show ip ospf neighbor
+------------------------------------------------------------
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+3.3.3.3           0   FULL/  -        00:00:33    10.3.4.3        Ethernet0/0
+
+>>> show ip ospf interface brief
+------------------------------------------------------------
+Interface    PID   Area            IP Address/Mask    Cost  State Nbrs F/C
+Lo0          1     0               4.4.4.4/32         1     LOOP  0/0
+Et0/0        1     0               10.3.4.4/24        10    P2P   1/1

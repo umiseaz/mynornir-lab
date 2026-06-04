@@ -192,3 +192,45 @@ pip install nornir nornir-netmiko nornir-utils jinja2 pyyaml --break-system-pack
 - IP addressing convention — last octet = IOU number (e.g. PE1=IOU1 → 10.1.1.1).
 - BGP uses peer-session + peer-policy templates (not peer-groups).
 - RR1 and RR2 are redundant route reflectors — all PE/P routers peer to both.
+
+
+
+```
+(nornir-env) khau@nuc:~/nornir-env/mynornir-lab$ python3 -c "
+from nornir import InitNornir
+import os
+BASE_DIR = os.path.dirname(os.path.abspath('inventory/hosts.yaml'))
+nr = InitNornir(inventory={'plugin': 'SimpleInventory', 'options': {'host_file': 'inventory/hosts.yaml', 'group_file': 'inventory/groups.yaml', 'defaults_file': 'inventory/defaults.yaml'}})
+for host in nr.inventory.hosts:
+    role = nr.inventory.hosts[host].data.get('role', 'MISSING')
+    print(f'{host:6} → role: {role}')
+"
+PE1    → role: pe
+PE2    → role: pe
+P1     → role: p
+P2     → role: p
+RR1    → role: rr
+RR2    → role: rr
+CE1    → role: ce
+CE2    → role: ce
+```
+
+```
+collect.py — Nornir show command collector for MPLS L3VPN lab
+
+Usage:
+    python3 collect.py --task ospf
+    python3 collect.py --task bgp
+    python3 collect.py --task all
+    python3 collect.py --task ospf --host pe1
+    python3 collect.py --task all --group core
+    python3 collect.py --task vrf --host pe1 pe2
+
+Exit codes:
+    0 — all commands collected successfully
+    1 — one or more routers failed
+```
+
+```
+python3 render.py && grep "auto-cost" rendered/*.cfg
+```

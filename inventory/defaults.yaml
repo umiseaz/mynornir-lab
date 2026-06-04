@@ -17,3 +17,5 @@ syslog:
 ospf_auth:
   key_id: 1
   key: "ospf@lab123"
+
+ospf_reference_bandwidth: 100

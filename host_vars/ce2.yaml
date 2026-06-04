@@ -20,15 +20,18 @@ interfaces:
     mask: 255.255.255.255
   - name: Ethernet1/0
     description: "link to PE2"
-    ip: 172.1.28.8
+    ip: 172.1.48.8
     mask: 255.255.255.0
 
 bgp:
   asn: 65001
   router_id: 88.88.88.88
+  networks:
+    - prefix: 88.88.88.88
+      mask: 255.255.255.255
 
   neighbors:
-    - ip: 172.1.28.1
+    - ip: 172.1.48.4
       remote_as: 65
       description: "PE2"
       route_map_in: PE2-IN
