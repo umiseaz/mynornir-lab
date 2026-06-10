@@ -28,3 +28,135 @@
 2026-06-04 13:02:21,377 -  nornir.core -     INFO -        run() - Running task 'run_show_commands' with args {'commands': ['show ip route', 'show ip bgp summary', 'show ip bgp'], 'log_dir': '/home/khau/nornir-env/mynornir-lab/logs/2026-06-04_13-02-21'} on 1 hosts
 2026-06-04 13:02:22,664 -  nornir.core -     INFO -        run() - Running task 'run_show_commands' with args {'commands': ['show ip route', 'show ip bgp summary', 'show ip bgp'], 'log_dir': '/home/khau/nornir-env/mynornir-lab/logs/2026-06-04_13-02-21'} on 1 hosts
 2026-06-04 13:04:07,985 -  nornir.core -     INFO -        run() - Running task 'run_show_commands' with args {'commands': ['show ip route', 'show ip bgp summary', 'show ip bgp', 'ping 88.88.88.88 source Loopback0 repeat 5', 'ping 172.1.48.8 source Loopback0 repeat 5'], 'log_dir': '/home/khau/nornir-env/mynornir-lab/logs/2026-06-04_13-04-07'} on 1 hosts
+2026-06-10 12:35:03,274 -  nornir.core -     INFO -        run() - Running task 'run_show_commands' with args {'commands': ['show mpls ldp neighbor', 'show mpls ldp bindings summary'], 'log_dir': '/home/khau/nornir-env/mynornir-lab/logs/2026-06-10_12-35-03'} on 1 hosts
+2026-06-10 12:35:06,390 - nornir.core.task -    ERROR -      start() - Host 'PE1': task 'netmiko_send_command' failed with traceback:
+Traceback (most recent call last):
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/netmiko/base_connection.py", line 1146, in establish_connection
+    self.remote_conn_pre.connect(**ssh_connect_params)
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/paramiko/client.py", line 407, in connect
+    raise NoValidConnectionsError(errors)
+paramiko.ssh_exception.NoValidConnectionsError: [Errno None] Unable to connect to port 22 on 10.1.1.1
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/nornir/core/task.py", line 98, in start
+    r = self.task(self, **self.params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/nornir_netmiko/tasks/netmiko_send_command.py", line 26, in netmiko_send_command
+    net_connect = task.host.get_connection(CONNECTION_NAME, task.nornir.config)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/nornir/core/inventory.py", line 476, in get_connection
+    self.open_connection(
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/nornir/core/inventory.py", line 528, in open_connection
+    conn_obj.open(
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/nornir_netmiko/connections/netmiko.py", line 59, in open
+    connection = ConnectHandler(**parameters)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/netmiko/ssh_dispatcher.py", line 460, in ConnectHandler
+    return ConnectionClass(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/netmiko/base_connection.py", line 495, in __init__
+    self._open()
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/netmiko/base_connection.py", line 500, in _open
+    self.establish_connection()
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/netmiko/base_connection.py", line 1168, in establish_connection
+    raise NetmikoTimeoutException(msg)
+netmiko.exceptions.NetmikoTimeoutException: TCP connection to device failed.
+
+Common causes of this problem are:
+1. Incorrect hostname or IP address.
+2. Wrong TCP port.
+3. Intermediate firewall blocking access.
+
+Device settings: cisco_ios 10.1.1.1:22
+
+
+
+2026-06-10 12:35:09,508 - nornir.core.task -    ERROR -      start() - Host 'PE1': task 'netmiko_send_command' failed with traceback:
+Traceback (most recent call last):
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/netmiko/base_connection.py", line 1146, in establish_connection
+    self.remote_conn_pre.connect(**ssh_connect_params)
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/paramiko/client.py", line 407, in connect
+    raise NoValidConnectionsError(errors)
+paramiko.ssh_exception.NoValidConnectionsError: [Errno None] Unable to connect to port 22 on 10.1.1.1
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/nornir/core/task.py", line 98, in start
+    r = self.task(self, **self.params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/nornir_netmiko/tasks/netmiko_send_command.py", line 26, in netmiko_send_command
+    net_connect = task.host.get_connection(CONNECTION_NAME, task.nornir.config)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/nornir/core/inventory.py", line 476, in get_connection
+    self.open_connection(
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/nornir/core/inventory.py", line 528, in open_connection
+    conn_obj.open(
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/nornir_netmiko/connections/netmiko.py", line 59, in open
+    connection = ConnectHandler(**parameters)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/netmiko/ssh_dispatcher.py", line 460, in ConnectHandler
+    return ConnectionClass(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/netmiko/base_connection.py", line 495, in __init__
+    self._open()
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/netmiko/base_connection.py", line 500, in _open
+    self.establish_connection()
+  File "/home/khau/nornir-env/lib/python3.12/site-packages/netmiko/base_connection.py", line 1168, in establish_connection
+    raise NetmikoTimeoutException(msg)
+netmiko.exceptions.NetmikoTimeoutException: TCP connection to device failed.
+
+Common causes of this problem are:
+1. Incorrect hostname or IP address.
+2. Wrong TCP port.
+3. Intermediate firewall blocking access.
+
+Device settings: cisco_ios 10.1.1.1:22
+
+
+
+2026-06-10 12:36:28,534 -  nornir.core -     INFO -        run() - Running task 'push_config' with args {} on 8 hosts
+2026-06-10 12:37:06,351 -  nornir.core -     INFO -        run() - Running task 'save_config' with args {} on 8 hosts
+2026-06-10 12:38:12,180 -  nornir.core -     INFO -        run() - Running task 'run_show_commands' with args {'commands': ['show mpls ldp neighbor', 'show mpls ldp bindings summary'], 'log_dir': '/home/khau/nornir-env/mynornir-lab/logs/2026-06-10_12-38-12'} on 1 hosts
+2026-06-10 12:41:05,976 -  nornir.core -     INFO -        run() - Running task 'run_show_commands' with args {'commands': ['show mpls ldp neighbor', 'show mpls ldp bindings'], 'log_dir': '/home/khau/nornir-env/mynornir-lab/logs/2026-06-10_12-41-05'} on 1 hosts
+2026-06-10 12:43:19,537 -  nornir.core -     INFO -        run() - Running task 'run_show_commands' with args {'commands': ['show ip bgp summary', 'show bgp vpnv4 unicast all summary', 'show bgp vpnv4 unicast all'], 'log_dir': '/home/khau/nornir-env/mynornir-lab/logs/2026-06-10_12-43-19'} on 1 hosts
+2026-06-10 12:48:49,431 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 12:48:51,566 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 12:48:53,066 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'p'} on 1 hosts
+2026-06-10 12:48:54,481 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'p'} on 1 hosts
+2026-06-10 12:48:56,071 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'rr'} on 1 hosts
+2026-06-10 12:48:57,580 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'rr'} on 1 hosts
+2026-06-10 12:48:59,213 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
+2026-06-10 12:49:00,313 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
+2026-06-10 12:49:53,327 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 12:54:33,126 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 12:56:16,179 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 12:56:48,054 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 12:58:15,350 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 12:58:33,679 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 12:59:56,366 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 12:59:58,305 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 13:00:00,070 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'p'} on 1 hosts
+2026-06-10 13:00:01,546 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'p'} on 1 hosts
+2026-06-10 13:00:03,055 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'rr'} on 1 hosts
+2026-06-10 13:00:04,765 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'rr'} on 1 hosts
+2026-06-10 13:00:06,503 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
+2026-06-10 13:00:07,786 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
+2026-06-10 13:02:32,426 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 13:02:34,432 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 13:02:36,064 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'p'} on 1 hosts
+2026-06-10 13:02:37,585 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'p'} on 1 hosts
+2026-06-10 13:02:38,998 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'rr'} on 1 hosts
+2026-06-10 13:02:40,607 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'rr'} on 1 hosts
+2026-06-10 13:02:42,137 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
+2026-06-10 13:02:43,444 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
+2026-06-10 13:06:48,977 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 13:06:51,058 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-06-10 13:06:52,592 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'p'} on 1 hosts
+2026-06-10 13:06:53,946 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'p'} on 1 hosts
+2026-06-10 13:06:55,310 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'rr'} on 1 hosts
+2026-06-10 13:06:56,742 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'rr'} on 1 hosts
+2026-06-10 13:06:58,292 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
+2026-06-10 13:06:59,548 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts

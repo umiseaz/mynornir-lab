@@ -1,0 +1,14 @@
+Host    : PE1
+Role    : pe
+IP      : 10.1.1.1
+Time    : 2026-06-10 12:35:03.275355
+============================================================
+
+>>> show mpls ldp neighbor
+------------------------------------------------------------
+ERROR: Subtask: netmiko_send_command (failed)
+
+
+>>> show mpls ldp bindings summary
+------------------------------------------------------------
+ERROR: Subtask: netmiko_send_command (failed)

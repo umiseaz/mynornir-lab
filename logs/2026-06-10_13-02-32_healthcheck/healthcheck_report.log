@@ -1,0 +1,12 @@
+Baseline : 2026-06-10_12-48-49
+Check    : 2026-06-10_13-02-32
+Failed   : 5
+============================================================
+[FAIL] PE1: LDP session 2.2.2.2 MISSING
+[FAIL] PE2: VPNv4 peer 5.5.5.5 prefixes dropped: 0 (baseline: 2); VPNv4 peer 6.6.6.6 prefixes dropped: 0 (baseline: 2)
+[FAIL] P1: OSPF neighbor 1.1.1.1 MISSING; LDP session 1.1.1.1 MISSING
+[ OK ] P2
+[FAIL] RR1: BGP peer 1.1.1.1 state: Idle (expected Established); VPNv4 peer 1.1.1.1 state: Idle (expected Established); VPNv4 peer 6.6.6.6 prefixes dropped: 2 (baseline: 4)
+[FAIL] RR2: BGP peer 1.1.1.1 state: Idle (expected Established); VPNv4 peer 1.1.1.1 state: Idle (expected Established); VPNv4 peer 5.5.5.5 prefixes dropped: 2 (baseline: 4)
+[ OK ] CE1
+[ OK ] CE2

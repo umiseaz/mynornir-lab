@@ -1,0 +1,21 @@
+Host    : PE1
+Role    : pe
+IP      : 10.1.1.1
+Time    : 2026-06-10 12:38:12.180852
+============================================================
+
+>>> show mpls ldp neighbor
+------------------------------------------------------------
+    Peer LDP Ident: 2.2.2.2:0; Local LDP Ident 1.1.1.1:0
+	TCP connection: 2.2.2.2.53292 - 1.1.1.1.646
+	State: Oper; Msgs sent/rcvd: 14/14; Downstream
+	Up time: 00:00:32
+	LDP discovery sources:
+	  Ethernet0/0, Src IP addr: 10.1.2.2
+        Addresses bound to peer LDP Ident:
+          10.1.2.2        10.2.3.2        10.2.5.2        2.2.2.2         
+
+>>> show mpls ldp bindings summary
+------------------------------------------------------------
+                           ^
+% Invalid input detected at '^' marker.

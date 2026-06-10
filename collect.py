@@ -46,7 +46,8 @@ TASKS = {
     "ldp": {
         "commands": [
             "show mpls ldp neighbor",
-            "show mpls ldp bindings summary",
+            "show mpls ldp bindings",
+            "show mpls interface",
         ],
         "roles": ["pe", "p", "rr"],
     },
@@ -68,7 +69,6 @@ TASKS = {
     "mpls": {
         "commands": [
             "show mpls forwarding-table",
-            "show mpls ldp neighbor brief",
         ],
         "roles": ["pe", "p", "rr"],
     },
