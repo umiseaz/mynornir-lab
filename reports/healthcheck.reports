@@ -1,0 +1,86 @@
+
+============================================================
+ Running Health Checks
+============================================================
+
+── PE1 (pe) ──
+  [✓] OSPF 2.2.2.2 FULL on Ethernet0/0
+  [✓] LDP 2.2.2.2 Oper on Ethernet0/0
+  [✓] BGP 5.5.5.5 Established — prefixes: 0
+  [✓] BGP 6.6.6.6 Established — prefixes: 0
+  [✓] VPNv4 5.5.5.5 Established — prefixes: 2
+  [✓] VPNv4 6.6.6.6 Established — prefixes: 2
+  [✓] VPNv4 172.1.17.7 Established — prefixes: 1
+
+── PE2 (pe) ──
+  [✓] OSPF 3.3.3.3 FULL on Ethernet0/0
+  [✓] LDP 3.3.3.3 Oper on Ethernet0/0
+  [✓] BGP 5.5.5.5 Established — prefixes: 0
+  [✓] BGP 6.6.6.6 Established — prefixes: 0
+  [✓] VPNv4 5.5.5.5 Established — prefixes: 2
+  [✓] VPNv4 6.6.6.6 Established — prefixes: 2
+  [✓] VPNv4 172.1.48.8 Established — prefixes: 1
+
+── P1 (p) ──
+  [✓] OSPF 5.5.5.5 FULL on Ethernet0/2
+  [✓] OSPF 3.3.3.3 FULL on Ethernet0/1
+  [✓] OSPF 1.1.1.1 FULL on Ethernet0/0
+  [✓] LDP 5.5.5.5 Oper on Ethernet0/2
+  [✓] LDP 3.3.3.3 Oper on Ethernet0/1
+  [✓] LDP 1.1.1.1 Oper on Ethernet0/0
+  [✓] BGP 5.5.5.5 Established — prefixes: 0
+  [✓] BGP 6.6.6.6 Established — prefixes: 0
+
+── P2 (p) ──
+  [✓] OSPF 6.6.6.6 FULL on Ethernet0/2
+  [✓] OSPF 2.2.2.2 FULL on Ethernet0/1
+  [✓] OSPF 4.4.4.4 FULL on Ethernet0/0
+  [✓] LDP 2.2.2.2 Oper on Ethernet0/1
+  [✓] LDP 4.4.4.4 Oper on Ethernet0/0
+  [✓] LDP 6.6.6.6 Oper on Ethernet0/2
+  [✓] BGP 5.5.5.5 Established — prefixes: 0
+  [✓] BGP 6.6.6.6 Established — prefixes: 0
+
+── RR1 (rr) ──
+  [✓] OSPF 2.2.2.2 FULL on Ethernet0/2
+  [✓] LDP 2.2.2.2 Oper on Ethernet0/2
+  [✓] BGP 1.1.1.1 Established — prefixes: 0
+  [✓] BGP 2.2.2.2 Established — prefixes: 0
+  [✓] BGP 3.3.3.3 Established — prefixes: 0
+  [✓] BGP 4.4.4.4 Established — prefixes: 0
+  [✓] BGP 6.6.6.6 Established — prefixes: 0
+  [✓] VPNv4 1.1.1.1 Established — prefixes: 2
+  [✓] VPNv4 4.4.4.4 Established — prefixes: 2
+  [✓] VPNv4 6.6.6.6 Established — prefixes: 4
+
+── RR2 (rr) ──
+  [✓] OSPF 3.3.3.3 FULL on Ethernet0/2
+  [✓] LDP 3.3.3.3 Oper on Ethernet0/2
+  [✓] BGP 1.1.1.1 Established — prefixes: 0
+  [✓] BGP 2.2.2.2 Established — prefixes: 0
+  [✓] BGP 3.3.3.3 Established — prefixes: 0
+  [✓] BGP 4.4.4.4 Established — prefixes: 0
+  [✓] BGP 5.5.5.5 Established — prefixes: 0
+  [✓] VPNv4 1.1.1.1 Established — prefixes: 2
+  [✓] VPNv4 4.4.4.4 Established — prefixes: 2
+  [✓] VPNv4 5.5.5.5 Established — prefixes: 4
+
+── CE1 (ce) ──
+  [✓] BGP 172.1.17.1 Established — prefixes: 3
+
+── CE2 (ce) ──
+  [✓] BGP 172.1.48.4 Established — prefixes: 3
+
+============================================================
+ Health Check Summary
+============================================================
+[ OK ] PE1
+[ OK ] PE2
+[ OK ] P1
+[ OK ] P2
+[ OK ] RR1
+[ OK ] RR2
+[ OK ] CE1
+[ OK ] CE2
+
+Report saved to: logs/2026-06-10_13-06-48_healthcheck/
