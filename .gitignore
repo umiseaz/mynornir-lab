@@ -1,0 +1,13 @@
+# Nornir logs
+nornir.log
+
+# Log directories — too noisy, not useful in git
+logs/
+
+# Baseline — environment specific, regenerate per lab
+baseline.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
