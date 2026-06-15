@@ -21,9 +21,13 @@ ospf:
 
 vrfs:
   - name: VRF_A
-    rd: "65:65001"
+    rd: "65:65002"
     rt_export: "65:65001"
     rt_import: "65:65001"
+  - name: VRF_B
+    rd: "65:65002"
+    rt_export: "65:65002"
+    rt_import: "65:65002"
 
 interfaces:
   - name: Loopback0
@@ -48,6 +52,12 @@ interfaces:
     ip: 172.1.48.4
     mask: 255.255.255.0
     vrf: VRF_A
+  - name: Ethernet1/1
+    description: "VRF B to CE4"
+    ip: 172.4.10.4
+    mask: 255.255.255.0
+    vrf: VRF_B
+
 
 bgp:
   asn: 65
@@ -90,6 +100,13 @@ bgp:
       as_override: true
       route_map_in: CE2-IN
       route_map_out: CE2-OUT
+    - ip: 172.4.10.10
+      remote_as: 65002
+      description: "CE4"
+      vrf: VRF_B
+      as_override: true
+      route_map_in: CE4-IN
+      route_map_out: CE4-OUT
 
 prefix_lists:
   - name: CE2-PREFIXES
@@ -100,6 +117,14 @@ prefix_lists:
       - seq: 20
         action: permit
         prefix: 172.1.48.0/24
+  - name: CE4-PREFIXES
+    entries:
+      - seq: 10
+        action: permit
+        prefix: 100.100.100.100/32
+      - seq: 20
+        action: permit
+        prefix: 172.4.10.0/24
 
 route_maps:
   - name: CE2-IN
@@ -108,9 +133,20 @@ route_maps:
       - seq: 10
         action: permit
         match: "ip address prefix-list CE2-PREFIXES"
+  - name: CE4-IN
+    description: "Accept CE4 prefixes"
+    entries:
+      - seq: 10
+        action: permit
+        match: "ip address prefix-list CE4-PREFIXES"
 
   - name: CE2-OUT
     description: "Advertise VRF_A routes to CE2"
+    entries:
+      - seq: 999
+        action: permit
+  - name: CE4-OUT
+    description: "Advertise VRF_B routes to CE4"
     entries:
       - seq: 999
         action: permit

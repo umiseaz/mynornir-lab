@@ -54,3 +54,17 @@ CE2:
     - ce
   data:
     role: ce
+
+CE3:
+  hostname: 10.1.1.9
+  groups:
+    - ce
+  data:
+    role: ce
+
+CE4:
+  hostname: 10.1.1.10
+  groups:
+    - ce
+  data:
+    role: ce

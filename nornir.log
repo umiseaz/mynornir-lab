@@ -160,3 +160,4 @@ Device settings: cisco_ios 10.1.1.1:22
 2026-06-10 13:06:56,742 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'rr'} on 1 hosts
 2026-06-10 13:06:58,292 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
 2026-06-10 13:06:59,548 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
+2026-06-10 13:38:42,010 -  nornir.core -     INFO -        run() - Running task 'save_config' with args {} on 8 hosts
