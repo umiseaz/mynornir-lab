@@ -54,3 +54,4 @@
 2026-06-16 13:57:42,657 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
 2026-06-16 13:57:43,799 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
 2026-06-16 13:57:44,893 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
+2026-06-16 14:00:58,460 -  nornir.core -     INFO -        run() - Running task 'save_config' with args {} on 10 hosts
