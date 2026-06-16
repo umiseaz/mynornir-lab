@@ -278,3 +278,29 @@ python3 test_template.py interfaces.j2 pe1 pe2 p1 p2 rr1 rr2
 
 # Test full config for one router
 python3 test_template.py master.j2 pe1
+
+# show run
+python3 -c "
+import os
+from nornir import InitNornir
+from nornir_netmiko.tasks import netmiko_send_command
+
+nr = InitNornir(
+    inventory={
+        'plugin': 'SimpleInventory',
+        'options': {
+            'host_file': 'inventory/hosts.yaml',
+            'group_file': 'inventory/groups.yaml',
+            'defaults_file': 'inventory/defaults.yaml',
+        }
+    }
+)
+
+nr_pe1 = nr.filter(name='PE1')
+result = nr_pe1.run(
+    task=netmiko_send_command,
+    command_string='show running-config',
+    use_textfsm=False,
+)
+print(result['PE1'][0].result[:3000])
+"

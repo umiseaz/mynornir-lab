@@ -99,7 +99,7 @@ bgp:
       as_override: true
       route_map_in: CE1-IN
       route_map_out: CE1-OUT
-    - ip: 172.1.17.9
+    - ip: 172.1.9.9
       remote_as: 65002
       description: "CE3"
       vrf: VRF_B
