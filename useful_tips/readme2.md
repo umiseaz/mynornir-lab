@@ -234,3 +234,11 @@ Exit codes:
 ```
 python3 render.py && grep "auto-cost" rendered/*.cfg
 ```
+
+```
+healthcheck.py
+
+ntc-templates for OSPF/BGP (lowercase keys)
+Custom TextFSM for LDP/VPNv4 (uppercase keys)
+Two different key naming conventions — annoying inconsistency
+```
