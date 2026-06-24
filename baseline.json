@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-16_13-57-14",
+  "timestamp": "2026-06-24_11-59-08",
   "hosts": {
     "PE1": {
       "show ip ospf neighbor": [
@@ -7,7 +7,7 @@
           "neighbor_id": "2.2.2.2",
           "priority": "0",
           "state": "FULL/  -",
-          "dead_time": "00:00:33",
+          "dead_time": "00:00:37",
           "ip_address": "10.1.2.2",
           "interface": "Ethernet0/0"
         }
@@ -17,7 +17,7 @@
           "PEER": "2.2.2.2",
           "LOCAL": "1.1.1.1",
           "STATE": "Oper",
-          "UPTIME": "00:14:30",
+          "UPTIME": "00:02:04",
           "INTERFACE": "Ethernet0/0"
         }
       ],
@@ -29,12 +29,12 @@
           "bgp_neighbor": "5.5.5.5",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "50",
-          "messages_sent": "46",
+          "messages_received": "16",
+          "messages_sent": "13",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:29",
+          "up_down": "00:02:37",
           "state_or_prefixes_received": "0"
         },
         {
@@ -44,12 +44,12 @@
           "bgp_neighbor": "6.6.6.6",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "51",
-          "messages_sent": "51",
+          "messages_received": "16",
+          "messages_sent": "13",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:29",
+          "up_down": "00:02:35",
           "state_or_prefixes_received": "0"
         }
       ],
@@ -57,25 +57,25 @@
         {
           "NEIGHBOR": "5.5.5.5",
           "AS": "65",
-          "UPDOWN": "00:14:29",
+          "UPDOWN": "00:02:37",
           "STATE_PFXRCD": "4"
         },
         {
           "NEIGHBOR": "6.6.6.6",
           "AS": "65",
-          "UPDOWN": "00:14:29",
+          "UPDOWN": "00:02:35",
           "STATE_PFXRCD": "4"
         },
         {
           "NEIGHBOR": "172.1.9.9",
           "AS": "65002",
-          "UPDOWN": "00:11:10",
+          "UPDOWN": "00:02:43",
           "STATE_PFXRCD": "1"
         },
         {
           "NEIGHBOR": "172.1.17.7",
           "AS": "65001",
-          "UPDOWN": "00:14:33",
+          "UPDOWN": "00:02:45",
           "STATE_PFXRCD": "1"
         }
       ]
@@ -96,7 +96,7 @@
           "PEER": "3.3.3.3",
           "LOCAL": "4.4.4.4",
           "STATE": "Oper",
-          "UPTIME": "00:14:32",
+          "UPTIME": "00:02:03",
           "INTERFACE": "Ethernet0/0"
         }
       ],
@@ -108,12 +108,12 @@
           "bgp_neighbor": "5.5.5.5",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "59",
-          "messages_sent": "45",
+          "messages_received": "16",
+          "messages_sent": "12",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:30",
+          "up_down": "00:02:38",
           "state_or_prefixes_received": "0"
         },
         {
@@ -123,12 +123,12 @@
           "bgp_neighbor": "6.6.6.6",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "50",
-          "messages_sent": "45",
+          "messages_received": "16",
+          "messages_sent": "12",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:32",
+          "up_down": "00:02:37",
           "state_or_prefixes_received": "0"
         }
       ],
@@ -136,25 +136,25 @@
         {
           "NEIGHBOR": "5.5.5.5",
           "AS": "65",
-          "UPDOWN": "00:14:30",
+          "UPDOWN": "00:02:39",
           "STATE_PFXRCD": "4"
         },
         {
           "NEIGHBOR": "6.6.6.6",
           "AS": "65",
-          "UPDOWN": "00:14:32",
+          "UPDOWN": "00:02:37",
           "STATE_PFXRCD": "4"
         },
         {
           "NEIGHBOR": "172.1.48.8",
           "AS": "65001",
-          "UPDOWN": "00:14:37",
+          "UPDOWN": "00:02:46",
           "STATE_PFXRCD": "1"
         },
         {
           "NEIGHBOR": "172.4.10.10",
           "AS": "65002",
-          "UPDOWN": "00:14:36",
+          "UPDOWN": "00:02:40",
           "STATE_PFXRCD": "1"
         }
       ]
@@ -165,7 +165,7 @@
           "neighbor_id": "5.5.5.5",
           "priority": "0",
           "state": "FULL/  -",
-          "dead_time": "00:00:36",
+          "dead_time": "00:00:35",
           "ip_address": "10.2.5.5",
           "interface": "Ethernet0/2"
         },
@@ -173,7 +173,7 @@
           "neighbor_id": "3.3.3.3",
           "priority": "0",
           "state": "FULL/  -",
-          "dead_time": "00:00:34",
+          "dead_time": "00:00:39",
           "ip_address": "10.2.3.3",
           "interface": "Ethernet0/1"
         },
@@ -181,31 +181,31 @@
           "neighbor_id": "1.1.1.1",
           "priority": "0",
           "state": "FULL/  -",
-          "dead_time": "00:00:33",
+          "dead_time": "00:00:37",
           "ip_address": "10.1.2.1",
           "interface": "Ethernet0/0"
         }
       ],
       "show mpls ldp neighbor": [
         {
-          "PEER": "1.1.1.1",
-          "LOCAL": "2.2.2.2",
-          "STATE": "Oper",
-          "UPTIME": "00:14:33",
-          "INTERFACE": "Ethernet0/0"
-        },
-        {
           "PEER": "5.5.5.5",
           "LOCAL": "2.2.2.2",
           "STATE": "Oper",
-          "UPTIME": "00:14:32",
+          "UPTIME": "00:02:08",
           "INTERFACE": "Ethernet0/2"
+        },
+        {
+          "PEER": "1.1.1.1",
+          "LOCAL": "2.2.2.2",
+          "STATE": "Oper",
+          "UPTIME": "00:02:07",
+          "INTERFACE": "Ethernet0/0"
         },
         {
           "PEER": "3.3.3.3",
           "LOCAL": "2.2.2.2",
           "STATE": "Oper",
-          "UPTIME": "00:14:30",
+          "UPTIME": "00:02:05",
           "INTERFACE": "Ethernet0/1"
         }
       ],
@@ -217,12 +217,12 @@
           "bgp_neighbor": "5.5.5.5",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "35",
-          "messages_sent": "35",
+          "messages_received": "8",
+          "messages_sent": "8",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:32",
+          "up_down": "00:02:50",
           "state_or_prefixes_received": "0"
         },
         {
@@ -232,12 +232,12 @@
           "bgp_neighbor": "6.6.6.6",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "35",
-          "messages_sent": "35",
+          "messages_received": "7",
+          "messages_sent": "7",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:32",
+          "up_down": "00:02:38",
           "state_or_prefixes_received": "0"
         }
       ]
@@ -248,7 +248,7 @@
           "neighbor_id": "6.6.6.6",
           "priority": "0",
           "state": "FULL/  -",
-          "dead_time": "00:00:36",
+          "dead_time": "00:00:37",
           "ip_address": "10.3.6.6",
           "interface": "Ethernet0/2"
         },
@@ -256,7 +256,7 @@
           "neighbor_id": "2.2.2.2",
           "priority": "0",
           "state": "FULL/  -",
-          "dead_time": "00:00:31",
+          "dead_time": "00:00:35",
           "ip_address": "10.2.3.2",
           "interface": "Ethernet0/1"
         },
@@ -264,32 +264,32 @@
           "neighbor_id": "4.4.4.4",
           "priority": "0",
           "state": "FULL/  -",
-          "dead_time": "00:00:34",
+          "dead_time": "00:00:35",
           "ip_address": "10.3.4.4",
           "interface": "Ethernet0/0"
         }
       ],
       "show mpls ldp neighbor": [
         {
-          "PEER": "6.6.6.6",
+          "PEER": "2.2.2.2",
           "LOCAL": "3.3.3.3",
           "STATE": "Oper",
-          "UPTIME": "00:14:36",
-          "INTERFACE": "Ethernet0/2"
+          "UPTIME": "00:02:06",
+          "INTERFACE": "Ethernet0/1"
         },
         {
           "PEER": "4.4.4.4",
           "LOCAL": "3.3.3.3",
           "STATE": "Oper",
-          "UPTIME": "00:14:35",
+          "UPTIME": "00:02:06",
           "INTERFACE": "Ethernet0/0"
         },
         {
-          "PEER": "2.2.2.2",
+          "PEER": "6.6.6.6",
           "LOCAL": "3.3.3.3",
           "STATE": "Oper",
-          "UPTIME": "00:14:31",
-          "INTERFACE": "Ethernet0/1"
+          "UPTIME": "00:01:58",
+          "INTERFACE": "Ethernet0/2"
         }
       ],
       "show ip bgp summary": [
@@ -300,12 +300,12 @@
           "bgp_neighbor": "5.5.5.5",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "36",
-          "messages_sent": "36",
+          "messages_received": "7",
+          "messages_sent": "7",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:33",
+          "up_down": "00:02:41",
           "state_or_prefixes_received": "0"
         },
         {
@@ -315,12 +315,12 @@
           "bgp_neighbor": "6.6.6.6",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "36",
-          "messages_sent": "35",
+          "messages_received": "7",
+          "messages_sent": "7",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:36",
+          "up_down": "00:02:40",
           "state_or_prefixes_received": "0"
         }
       ]
@@ -331,7 +331,7 @@
           "neighbor_id": "2.2.2.2",
           "priority": "0",
           "state": "FULL/  -",
-          "dead_time": "00:00:37",
+          "dead_time": "00:00:34",
           "ip_address": "10.2.5.2",
           "interface": "Ethernet0/2"
         }
@@ -341,7 +341,7 @@
           "PEER": "2.2.2.2",
           "LOCAL": "5.5.5.5",
           "STATE": "Oper",
-          "UPTIME": "00:14:35",
+          "UPTIME": "00:02:10",
           "INTERFACE": "Ethernet0/2"
         }
       ],
@@ -353,12 +353,12 @@
           "bgp_neighbor": "1.1.1.1",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "47",
-          "messages_sent": "50",
+          "messages_received": "13",
+          "messages_sent": "16",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:35",
+          "up_down": "00:02:43",
           "state_or_prefixes_received": "0"
         },
         {
@@ -368,12 +368,12 @@
           "bgp_neighbor": "2.2.2.2",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "35",
-          "messages_sent": "36",
+          "messages_received": "8",
+          "messages_sent": "8",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:35",
+          "up_down": "00:02:53",
           "state_or_prefixes_received": "0"
         },
         {
@@ -383,12 +383,12 @@
           "bgp_neighbor": "3.3.3.3",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "36",
-          "messages_sent": "36",
+          "messages_received": "7",
+          "messages_sent": "7",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:35",
+          "up_down": "00:02:43",
           "state_or_prefixes_received": "0"
         },
         {
@@ -398,12 +398,12 @@
           "bgp_neighbor": "4.4.4.4",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "45",
-          "messages_sent": "60",
+          "messages_received": "12",
+          "messages_sent": "16",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:35",
+          "up_down": "00:02:43",
           "state_or_prefixes_received": "0"
         },
         {
@@ -413,12 +413,12 @@
           "bgp_neighbor": "6.6.6.6",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "49",
-          "messages_sent": "50",
+          "messages_received": "16",
+          "messages_sent": "16",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:35",
+          "up_down": "00:02:41",
           "state_or_prefixes_received": "0"
         }
       ],
@@ -426,19 +426,19 @@
         {
           "NEIGHBOR": "1.1.1.1",
           "AS": "65",
-          "UPDOWN": "00:14:35",
+          "UPDOWN": "00:02:43",
           "STATE_PFXRCD": "4"
         },
         {
           "NEIGHBOR": "4.4.4.4",
           "AS": "65",
-          "UPDOWN": "00:14:35",
+          "UPDOWN": "00:02:43",
           "STATE_PFXRCD": "4"
         },
         {
           "NEIGHBOR": "6.6.6.6",
           "AS": "65",
-          "UPDOWN": "00:14:35",
+          "UPDOWN": "00:02:41",
           "STATE_PFXRCD": "8"
         }
       ]
@@ -449,7 +449,7 @@
           "neighbor_id": "3.3.3.3",
           "priority": "0",
           "state": "FULL/  -",
-          "dead_time": "00:00:32",
+          "dead_time": "00:00:34",
           "ip_address": "10.3.6.3",
           "interface": "Ethernet0/2"
         }
@@ -459,7 +459,7 @@
           "PEER": "3.3.3.3",
           "LOCAL": "6.6.6.6",
           "STATE": "Oper",
-          "UPTIME": "00:14:39",
+          "UPTIME": "00:02:01",
           "INTERFACE": "Ethernet0/2"
         }
       ],
@@ -471,12 +471,12 @@
           "bgp_neighbor": "1.1.1.1",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "51",
-          "messages_sent": "51",
+          "messages_received": "13",
+          "messages_sent": "16",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:36",
+          "up_down": "00:02:42",
           "state_or_prefixes_received": "0"
         },
         {
@@ -486,12 +486,12 @@
           "bgp_neighbor": "2.2.2.2",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "35",
-          "messages_sent": "35",
+          "messages_received": "7",
+          "messages_sent": "7",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:37",
+          "up_down": "00:02:42",
           "state_or_prefixes_received": "0"
         },
         {
@@ -501,12 +501,12 @@
           "bgp_neighbor": "3.3.3.3",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "35",
-          "messages_sent": "36",
+          "messages_received": "7",
+          "messages_sent": "7",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:39",
+          "up_down": "00:02:43",
           "state_or_prefixes_received": "0"
         },
         {
@@ -516,12 +516,12 @@
           "bgp_neighbor": "4.4.4.4",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "45",
-          "messages_sent": "51",
+          "messages_received": "12",
+          "messages_sent": "16",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:38",
+          "up_down": "00:02:43",
           "state_or_prefixes_received": "0"
         },
         {
@@ -531,12 +531,12 @@
           "bgp_neighbor": "5.5.5.5",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "50",
-          "messages_sent": "50",
+          "messages_received": "16",
+          "messages_sent": "16",
           "table_version": "1",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:36",
+          "up_down": "00:02:42",
           "state_or_prefixes_received": "0"
         }
       ],
@@ -544,19 +544,19 @@
         {
           "NEIGHBOR": "1.1.1.1",
           "AS": "65",
-          "UPDOWN": "00:14:36",
+          "UPDOWN": "00:02:42",
           "STATE_PFXRCD": "4"
         },
         {
           "NEIGHBOR": "4.4.4.4",
           "AS": "65",
-          "UPDOWN": "00:14:38",
+          "UPDOWN": "00:02:43",
           "STATE_PFXRCD": "4"
         },
         {
           "NEIGHBOR": "5.5.5.5",
           "AS": "65",
-          "UPDOWN": "00:14:36",
+          "UPDOWN": "00:02:42",
           "STATE_PFXRCD": "8"
         }
       ]
@@ -570,12 +570,12 @@
           "bgp_neighbor": "172.1.17.1",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "34",
-          "messages_sent": "27",
+          "messages_received": "12",
+          "messages_sent": "6",
           "table_version": "5",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:42",
+          "up_down": "00:02:54",
           "state_or_prefixes_received": "3"
         }
       ],
@@ -605,7 +605,7 @@
           "nexthop_ip": "172.1.17.1",
           "nexthop_vrf": "",
           "nexthop_if": "",
-          "uptime": "00:13:29",
+          "uptime": "00:01:36",
           "flag": ""
         },
         {
@@ -647,7 +647,7 @@
           "nexthop_ip": "172.1.17.1",
           "nexthop_vrf": "",
           "nexthop_if": "",
-          "uptime": "00:13:29",
+          "uptime": "00:01:36",
           "flag": ""
         }
       ]
@@ -661,12 +661,12 @@
           "bgp_neighbor": "172.1.48.4",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "34",
-          "messages_sent": "28",
+          "messages_received": "12",
+          "messages_sent": "7",
           "table_version": "5",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:46",
+          "up_down": "00:02:55",
           "state_or_prefixes_received": "3"
         }
       ],
@@ -682,7 +682,7 @@
           "nexthop_ip": "172.1.48.4",
           "nexthop_vrf": "",
           "nexthop_if": "",
-          "uptime": "00:13:30",
+          "uptime": "00:01:37",
           "flag": ""
         },
         {
@@ -710,7 +710,7 @@
           "nexthop_ip": "172.1.48.4",
           "nexthop_vrf": "",
           "nexthop_if": "",
-          "uptime": "00:13:30",
+          "uptime": "00:01:37",
           "flag": ""
         },
         {
@@ -752,12 +752,12 @@
           "bgp_neighbor": "172.1.9.1",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "24",
-          "messages_sent": "21",
+          "messages_received": "12",
+          "messages_sent": "7",
           "table_version": "5",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:11:21",
+          "up_down": "00:02:54",
           "state_or_prefixes_received": "3"
         }
       ],
@@ -787,7 +787,7 @@
           "nexthop_ip": "172.1.9.1",
           "nexthop_vrf": "",
           "nexthop_if": "",
-          "uptime": "00:11:21",
+          "uptime": "00:01:38",
           "flag": ""
         },
         {
@@ -829,7 +829,7 @@
           "nexthop_ip": "172.1.9.1",
           "nexthop_vrf": "",
           "nexthop_if": "",
-          "uptime": "00:11:21",
+          "uptime": "00:01:38",
           "flag": ""
         }
       ]
@@ -843,12 +843,12 @@
           "bgp_neighbor": "172.4.10.4",
           "bgp_version": "4",
           "neighbor_as": "65",
-          "messages_received": "33",
-          "messages_sent": "26",
+          "messages_received": "12",
+          "messages_sent": "7",
           "table_version": "5",
           "input_queue": "0",
           "output_queue": "0",
-          "up_down": "00:14:47",
+          "up_down": "00:02:51",
           "state_or_prefixes_received": "3"
         }
       ],
@@ -864,7 +864,7 @@
           "nexthop_ip": "172.4.10.4",
           "nexthop_vrf": "",
           "nexthop_if": "",
-          "uptime": "00:11:01",
+          "uptime": "00:01:39",
           "flag": ""
         },
         {
@@ -892,7 +892,7 @@
           "nexthop_ip": "172.4.10.4",
           "nexthop_vrf": "",
           "nexthop_if": "",
-          "uptime": "00:13:33",
+          "uptime": "00:01:39",
           "flag": ""
         },
         {
