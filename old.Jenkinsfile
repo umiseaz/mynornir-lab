@@ -28,40 +28,22 @@ pipeline {
             }
         }
 
-        stage('Validate') {
-            steps {
-                sh '''
-                    . venv/bin/activate
-                    python3 ci/check_vrf_consistency.py
-                '''
-            }
-        }
-
-        stage('Deploy (main only)') {
-            when {
-                branch 'main'
-            }
+        stage('Healthcheck (live lab)') {
             steps {
                 sh '''
                     . venv/bin/activate
                     python3 healthcheck.py
-                    python3 deploy.py --yes
-                    python3 healthcheck.py
-                    python3 save.py
                 '''
             }
         }
     }
 
     post {
-        always {
-            archiveArtifacts artifacts: 'rendered/*.cfg', fingerprint: true, allowEmptyArchive: true
-        }
         success {
-            echo "Build succeeded on branch ${env.BRANCH_NAME}"
+            archiveArtifacts artifacts: 'rendered/*.cfg', fingerprint: true
         }
         failure {
-            echo "Build failed on branch ${env.BRANCH_NAME} — check console output above."
+            echo 'Pipeline failed — check console output above.'
         }
     }
 }
