@@ -2,9 +2,6 @@ aiofiles==25.1.0
 aiohappyeyeballs==2.6.1
 aiohttp==3.13.5
 aiosignal==1.4.0
-ansible==14.1.0
-ansible-core==2.21.1
-ansible-pylibssh==1.4.0
 async-lru==2.3.0
 asyncssh==2.22.0
 attrs==26.1.0
@@ -17,7 +14,6 @@ charset-normalizer==3.4.7
 ciscoisesdk==2.4.2
 colorama==0.4.6
 cryptography==47.0.0
-cryptography==49.0.0
 dict2xml==1.7.8
 dill==0.4.1
 distro==1.9.0
@@ -54,14 +50,13 @@ netmiko==4.6.0
 netutils==1.17.2
 nornir==3.5.0
 nornir-jinja2==0.2.0
-nornir_napalm==0.5.0
 nornir-netmiko==1.0.1
 nornir-rich==0.2.0
 nornir-utils==0.2.0
+nornir_napalm==0.5.0
 ntc_templates==9.1.0
 packaging==26.2
 paramiko==4.0.0
-paramiko==5.0.0
 pathspec==1.1.1
 prettytable==3.17.0
 propcache==0.4.1
@@ -98,7 +93,6 @@ pyvmomi==9.0.0.0
 PyYAML==6.0.3
 requests==2.33.1
 requests-toolbelt==1.0.0
-resolvelib==1.2.1
 rest.connector==26.4
 rich==13.9.4
 ruamel.yaml==0.19.1
