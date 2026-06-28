@@ -2,21 +2,48 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Setup venv') {
+            steps {
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
+            }
+        }
+
         stage('Render Configs') {
             steps {
                 sh '''
-                    # 1. Spin up the internal virtual environment
-                    python3 -m venv venv
                     . venv/bin/activate
-                    
-                    # 2. Upgrade pip and pull down your consolidated requirements
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
-                    
-                    # 3. Run the rendering engine
                     python3 render.py
                 '''
             }
+        }
+
+        stage('Healthcheck (live lab)') {
+            steps {
+                sh '''
+                    . venv/bin/activate
+                    python3 healthcheck.py
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            archiveArtifacts artifacts: 'rendered/*.cfg', fingerprint: true
+        }
+        failure {
+            echo 'Pipeline failed — check console output above.'
         }
     }
 }
