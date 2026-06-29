@@ -1,5 +1,6 @@
 """
 check_vrf_consistency.py — CI validation for MPLS L3VPN lab
+"CI" = Continuous Integration
 
 Checks that every VRF defined on multiple PE routers has matching
 RD/RT values everywhere it appears. This is exactly the class of bug
