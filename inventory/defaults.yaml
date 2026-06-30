@@ -18,4 +18,4 @@ ospf_auth:
   key_id: 1
   key: "ospf@lab123"
 
-ospf_reference_bandwidth: 100# Lab defaults — NTP, syslog, OSPF auth
+ospf_reference_bandwidth: 100
