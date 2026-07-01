@@ -15,7 +15,6 @@ pipeline {
                     python3 -m py_compile render.py deploy.py save.py healthcheck.py collect.py test_template.py ci/check_vrf_consistency.py
 
                     echo "── YAML lint (host_vars, inventory) ──"
-                    pip install --quiet --user yamllint
                     python3 -m yamllint -d "{extends: default, rules: {line-length: disable, document-start: disable}}" host_vars/ inventory/
 
                     echo "── Jinja2 template syntax check ──"
