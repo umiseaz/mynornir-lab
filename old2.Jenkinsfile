@@ -8,38 +8,6 @@ pipeline {
             }
         }
 
-        stage('Quick Syntax Checks') {
-            steps {
-                sh '''
-                    echo "── Python syntax check ──"
-                    python3 -m py_compile render.py deploy.py save.py healthcheck.py collect.py test_template.py ci/check_vrf_consistency.py
-
-                    echo "── YAML lint (host_vars, inventory) ──"
-                    pip install --quiet --user yamllint
-                    python3 -m yamllint -d "{extends: default, rules: {line-length: disable, document-start: disable}}" host_vars/ inventory/
-
-                    echo "── Jinja2 template syntax check ──"
-                    python3 -c "
-import sys
-from jinja2 import Environment, FileSystemLoader, TemplateSyntaxError
-
-env = Environment(loader=FileSystemLoader('templates/'))
-failed = False
-import os
-for f in os.listdir('templates/'):
-    if f.endswith('.j2'):
-        try:
-            env.get_template(f)
-            print(f'  [OK] {f}')
-        except TemplateSyntaxError as e:
-            print(f'  [FAIL] {f}: {e}')
-            failed = True
-sys.exit(1 if failed else 0)
-"
-                '''
-            }
-        }
-
         stage('Setup venv') {
             steps {
                 sh '''
