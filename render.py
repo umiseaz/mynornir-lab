@@ -1,15 +1,18 @@
 import os
 import yaml
 import glob
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ── Jinja2 environment ────────────────────────────────────
+# StrictUndefined: a missing/typo'd YAML key fails the render loudly
+# instead of silently producing an empty value in the config.
 env = Environment(
     loader=FileSystemLoader(os.path.join(BASE_DIR, "templates/")),
     trim_blocks=True,
     lstrip_blocks=True,
+    undefined=StrictUndefined,
 )
 
 # ── Load defaults ─────────────────────────────────────────

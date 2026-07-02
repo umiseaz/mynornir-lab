@@ -1,7 +1,7 @@
 import os
 import sys
 import yaml
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 # Usage: python3 test_template.py bgp.j2 pe1
 # Or:    python3 test_template.py bgp.j2 pe1 pe2 rr1
@@ -15,6 +15,7 @@ env = Environment(
     loader=FileSystemLoader(os.path.join(BASE_DIR, "templates/")),
     trim_blocks=True,
     lstrip_blocks=True,
+    undefined=StrictUndefined,
 )
 
 defaults = yaml.safe_load(open(os.path.join(BASE_DIR, "inventory/defaults.yaml"))) or {}
