@@ -26,8 +26,9 @@ inventory/
   hosts.yaml              Nornir inventory: device IP, group, role
   groups.yaml              Group-level connection defaults (core vs ce: platform, netmiko device_type/secret)
   defaults.yaml            Shared vars merged into every host (NTP, syslog, OSPF auth key)
-textfsm/*.textfsm        Custom TextFSM templates (LDP neighbor, VPNv4 summary) — ntc-templates doesn't cover these
+textfsm/*.textfsm        Custom TextFSM templates: LDP neighbor + VPNv4 summary (used by healthcheck.py; ntc-templates doesn't cover these) and ospf_neighbor.textfsm (currently unused — OSPF is parsed via built-in ntc-templates)
 ci/check_vrf_consistency.py   CI gate: RD/RT must match across every PE for a given VRF name
+ci/check_data_consistency.py  CI gate: reference integrity (peer-session/policy/route-map/prefix-list/VRF), duplicate IPs, router-id uniqueness, iBGP/eBGP peer resolution, inventory<->host_vars sync
 rendered/*.cfg            Generated output of render.py — do not hand-edit, do not treat as source
 bootstrap/*.cfg           Minimal OOB bring-up configs (not touched by render.py)
 useful_tips/              STALE draft notes (8-device topology, no VRF_B, pre-CI). README.md supersedes it.
@@ -108,15 +109,15 @@ Quick Syntax Checks   py_compile on all *.py, yamllint on host_vars/ + inventory
 Setup venv            fresh venv, pip install -r requirements.txt
 Template Syntax Check  Jinja2 parse check on every templates/*.j2
 Render Configs         python3 render.py
-Validate               python3 ci/check_vrf_consistency.py
+Validate               python3 ci/check_vrf_consistency.py + ci/check_data_consistency.py
 Deploy (main only)     healthcheck.py -> deploy.py --yes -> healthcheck.py -> save.py
 Tag last successful    force-moves git tag `last_deploy_tag` to the deployed commit (main only)
 ```
 
 There is no unit/integration test suite (no pytest). "Running the tests"
 locally means replicating the syntax-check and validate stages above:
-`py_compile`, `yamllint`, the Jinja2 parse check, and
-`ci/check_vrf_consistency.py`.
+`py_compile`, `yamllint`, the Jinja2 parse check,
+`ci/check_vrf_consistency.py`, and `ci/check_data_consistency.py`.
 
 ## Conventions & gotchas
 
@@ -126,7 +127,9 @@ Distilled from real incidents (full writeups in `README.md`):
   Jinja2 loops (see `vrf.j2`, `bgp_pe_ce.j2`). IOS's CLI parser rejects two
   back-to-back `address-family`/`exit-address-family` blocks pushed via
   `netmiko_send_config` without a separator, even though the same text
-  pastes fine by hand.
+  pastes fine by hand. `deploy.py` preserves bare `!` lines for exactly this
+  reason (it only strips blank lines and `!`-prefixed comment text) — don't
+  change that filter.
 - **RD/RT changes are additive-only via config push** — Netmiko config-merge
   only adds lines textually absent from running-config; it won't detect "this
   value is wrong now." `ci/check_vrf_consistency.py` is the guardrail against
