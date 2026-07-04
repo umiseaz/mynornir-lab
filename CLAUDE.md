@@ -22,6 +22,7 @@ template output/behavior here, it's worth knowing that repo exists.
 ```
 templates/*.j2          12 Jinja2 templates, role-based, included by master.j2
 host_vars/*.yaml         Per-device data: interfaces, vrfs, bgp peers, prefix-lists, route-maps (10 files)
+config.yaml              Nornir config: SimpleInventory file paths + threaded runner (num_workers)
 inventory/
   hosts.yaml              Nornir inventory: device IP, group, role
   groups.yaml              Group-level connection defaults (core vs ce: platform, netmiko device_type/secret)
@@ -88,8 +89,12 @@ meaningful once a human has used `collect.py` to bless the baseline state.
   can live in `host_vars/*.yaml` instead.
 - `render.py` reads `host_vars/*.yaml` directly via glob — it does **not**
   go through `inventory/hosts.yaml`. Rendering and the Nornir inventory used
-  for `deploy.py`/`healthcheck.py`/`collect.py` are two separate paths that
-  happen to be keyed by the same hostnames.
+  for `deploy.py`/`healthcheck.py`/`collect.py`/`save.py` are two separate
+  paths that happen to be keyed by the same hostnames.
+- The Nornir scripts load `config.yaml` (`InitNornir(config_file=...)`),
+  which points at the `inventory/*.yaml` files and sets the threaded runner.
+  Paths in `config.yaml` are CWD-relative, so each script does
+  `os.chdir(BASE_DIR)` first — keep that line when editing the scripts.
 - Per-host render data is `{**defaults, **host_data}` — `inventory/defaults.yaml`
   is the base, `host_vars/<host>.yaml` overrides on conflict.
 - `templates/master.j2` composes other templates by `role`
