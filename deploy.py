@@ -61,9 +61,13 @@ def push_config(task):
         print(f"[!] No rendered config found for {task.host.name} — run render.py first")
         return
 
+    # Keep bare "!" separator lines — IOS needs them between consecutive
+    # address-family blocks pushed via netmiko_send_config (postmortem #1).
+    # Only blank lines and "!"-prefixed comment text are dropped.
     config_lines = [
         line for line in config.splitlines()
-        if line.strip() and not line.strip().startswith("!")
+        if line.strip() == "!"
+        or (line.strip() and not line.strip().startswith("!"))
     ]
 
     print(f"[~] Pushing config to {task.host.name}...")
