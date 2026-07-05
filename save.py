@@ -5,17 +5,9 @@ from nornir_utils.plugins.functions import print_result
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-nr = InitNornir(
-    runner={"plugin": "threaded", "options": {"num_workers": 8}},
-    inventory={
-        "plugin": "SimpleInventory",
-        "options": {
-            "host_file": os.path.join(BASE_DIR, "inventory/hosts.yaml"),
-            "group_file": os.path.join(BASE_DIR, "inventory/groups.yaml"),
-            "defaults_file": os.path.join(BASE_DIR, "inventory/defaults.yaml"),
-        }
-    }
-)
+# config.yaml paths are CWD-relative
+os.chdir(BASE_DIR)
+nr = InitNornir(config_file="config.yaml")
 
 def save_config(task):
     task.run(

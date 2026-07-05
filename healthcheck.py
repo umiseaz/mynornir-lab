@@ -338,18 +338,9 @@ def main():
                         help="Run only this check (default: all)")
     args = parser.parse_args()
 
-    # Init Nornir
-    nr = InitNornir(
-        runner={"plugin": "threaded", "options": {"num_workers": 5}},
-        inventory={
-            "plugin": "SimpleInventory",
-            "options": {
-                "host_file":     os.path.join(BASE_DIR, "inventory/hosts.yaml"),
-                "group_file":    os.path.join(BASE_DIR, "inventory/groups.yaml"),
-                "defaults_file": os.path.join(BASE_DIR, "inventory/defaults.yaml"),
-            },
-        },
-    )
+    # Init Nornir — config.yaml paths are CWD-relative
+    os.chdir(BASE_DIR)
+    nr = InitNornir(config_file="config.yaml")
 
     # Filter hosts if specified
     if args.host:
