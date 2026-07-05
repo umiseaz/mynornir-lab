@@ -69,24 +69,29 @@ Two VRFs: **VRF_A** (rd 65:65001) and **VRF_B** (rd 65:65002), each spanning bot
 templates/            12 Jinja2 templates — role-based, identical output to the Ansible repo
 host_vars/             Per-device YAML data (10 files)
 inventory/             Nornir inventory + shared defaults
+config.yaml            Nornir config — SimpleInventory paths + threaded runner, single source of truth
 textfsm/               Custom TextFSM templates (LDP neighbor, VPNv4 summary)
 ci/
-  check_vrf_consistency.py   CI gate — catches RD/RT mismatches before deploy
+  check_vrf_consistency.py    CI gate — catches RD/RT mismatches before deploy
+  check_data_consistency.py   CI gate — reference integrity, duplicate IPs, router-id uniqueness,
+                              iBGP/eBGP peer resolution, inventory↔host_vars sync
 rendered/              Generated device configs (build output)
 bootstrap/              Minimal OOB bring-up configs
 
-render.py              Render-only — no SSH, no device contact
+render.py              Render-only — no SSH, no device contact (StrictUndefined: missing YAML keys fail loudly)
 deploy.py              Push-only — requires --yes flag, supports --limit HOST
 save.py                write memory across all devices
-healthcheck.py          Baseline capture + structured health verification
+healthcheck.py          Baseline capture + structured health verification (--task to scope checks)
 collect.py              Ad-hoc show-command collector (raw output, human-reviewed)
 test_template.py        Quick single-template/single-host render for debugging
 
 Jenkinsfile             Branch-aware CI/CD pipeline definition
-Dockerfile               Custom Jenkins image (Python, yamllint, git, sshpass, legacy SSH config)
-docker-compose.yml       Jenkins deployment (host networking for lab reachability)
 baseline.json            Captured healthy-state snapshot — regenerate after real topology changes
 ```
+
+The custom Jenkins image (`Dockerfile` with Python, yamllint, git, sshpass,
+legacy SSH config) and its `docker-compose.yml` deployment live on the Jenkins
+host, not in this repo.
 
 ---
 
@@ -127,7 +132,9 @@ Feature branch pushed
    → Setup venv            (isolated per-build, from requirements.txt)
    → Template Syntax Check (Jinja2 parse check)
    → Render Configs
-   → Validate              (ci/check_vrf_consistency.py — RD/RT consistency across PEs)
+   → Validate              (ci/check_vrf_consistency.py + ci/check_data_consistency.py —
+                            RD/RT consistency, reference integrity, duplicate IPs,
+                            router-id uniqueness, peer resolution, inventory sync)
    → [Deploy stage SKIPPED — not main]
    → Status reported to GitHub PR
 
@@ -154,7 +161,7 @@ Real bugs hit and diagnosed during this build.
 
 **Root cause:** Two consecutive `address-family ipv4 vrf X` blocks pushed via `netmiko_send_config` with no `!` separator between them confuse the IOS CLI parser under live automation, even though the exact same text pastes cleanly by hand into a console with natural typing delay.
 
-**Fix:** Added an explicit `!` after every `exit-address-family` inside the Jinja2 loops in `vrf.j2` and `bgp_pe_ce.j2`.
+**Fix:** Added an explicit `!` after every `exit-address-family` inside the Jinja2 loops in `vrf.j2` and `bgp_pe_ce.j2`. `deploy.py` preserves bare `!` separator lines when pushing (it strips only blank lines and `!`-prefixed comment text) so the separators actually reach the device.
 
 **Lesson:** A config that's syntactically valid IOS and pastes fine by hand is not the same guarantee as a config that survives automated bulk push.
 
