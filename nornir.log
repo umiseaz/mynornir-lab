@@ -162,3 +162,13 @@
 2026-06-24 12:19:09,120 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
 2026-06-24 12:19:10,285 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
 2026-06-24 12:19:13,799 -  nornir.core -     INFO -        run() - Running task 'save_config' with args {} on 10 hosts
+2026-07-05 10:33:15,695 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-07-05 10:33:17,659 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'pe'} on 1 hosts
+2026-07-05 10:33:19,252 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'p'} on 1 hosts
+2026-07-05 10:33:20,881 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'p'} on 1 hosts
+2026-07-05 10:33:22,250 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'rr'} on 1 hosts
+2026-07-05 10:33:23,904 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'rr'} on 1 hosts
+2026-07-05 10:33:25,607 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
+2026-07-05 10:33:26,931 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
+2026-07-05 10:33:28,141 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
+2026-07-05 10:33:29,409 -  nornir.core -     INFO -        run() - Running task 'collect_host' with args {'role': 'ce'} on 1 hosts
