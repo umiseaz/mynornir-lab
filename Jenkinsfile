@@ -12,7 +12,7 @@ pipeline {
             steps {
                 sh '''
                     echo "── Python syntax check ──"
-                    python3 -m py_compile render.py deploy.py save.py healthcheck.py collect.py test_template.py ci/check_vrf_consistency.py ci/check_data_consistency.py
+                    python3 -m py_compile render.py deploy.py save.py verification/healthcheck.py collect.py test_template.py ci/check_vrf_consistency.py ci/check_data_consistency.py
 
                     echo "── YAML lint (host_vars, inventory) ──"
                     python3 -m yamllint -d "{extends: default, rules: {line-length: disable, document-start: disable}}" host_vars/ inventory/ config.yaml
@@ -82,9 +82,9 @@ sys.exit(1 if failed else 0)
             steps {
                 sh '''
                     . venv/bin/activate
-                    python3 healthcheck.py
+                    python3 verification/healthcheck.py
                     python3 deploy.py --yes
-                    python3 healthcheck.py
+                    python3 verification/healthcheck.py
                     python3 save.py
                 '''
             }

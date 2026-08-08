@@ -72,7 +72,7 @@ templates/            12 Jinja2 templates — role-based, identical output to th
 host_vars/             Per-device YAML data — interfaces, VRFs, BGP peers, prefix-lists, route-maps (10 files)
 inventory/             Nornir inventory + shared defaults — hosts.yaml is the single source of truth for device role
 config.yaml            Nornir config — SimpleInventory paths + threaded runner, single source of truth
-textfsm/               Custom TextFSM templates (LDP neighbor, VPNv4 summary)
+                              (shared by deploy.py/collect.py/save.py/verification/healthcheck.py)
 ci/
   check_vrf_consistency.py    CI gate — catches RD/RT mismatches before deploy
   check_data_consistency.py   CI gate — reference integrity, duplicate IPs, router-id uniqueness,
@@ -84,12 +84,16 @@ render.py              Render-only — no SSH, no device contact (StrictUndefine
                               role is looked up from inventory/hosts.yaml, not host_vars/)
 deploy.py              Push-only — requires --yes flag, supports --limit HOST
 save.py                write memory across all devices
-healthcheck.py          Baseline capture + structured health verification (--task to scope checks)
-collect.py              Ad-hoc show-command collector (raw output, human-reviewed)
+collect.py              Ad-hoc show-command collector (raw output, human-reviewed); logs/ holds its per-run dumps
 test_template.py        Quick single-template/single-host render for debugging
 
+verification/           Everything specific to health-check verification
+  healthcheck.py          Baseline capture + structured health verification (--task to scope checks)
+  baseline.json            Captured healthy-state snapshot — regenerate after real topology changes
+  textfsm/                 Custom TextFSM templates (LDP neighbor, VPNv4 summary)
+  logs/                    Per-run healthcheck reports (*_healthcheck/)
+
 Jenkinsfile             Branch-aware CI/CD pipeline definition
-baseline.json            Captured healthy-state snapshot — regenerate after real topology changes
 ```
 
 The custom Jenkins image (`Dockerfile` with Python, yamllint, git, sshpass,
@@ -114,9 +118,9 @@ save            → write memory, only once verified good
 
 ```bash
 python3 render.py
-python3 healthcheck.py
+python3 verification/healthcheck.py
 python3 deploy.py --yes
-python3 healthcheck.py
+python3 verification/healthcheck.py
 python3 save.py
 ```
 

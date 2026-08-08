@@ -27,7 +27,6 @@ inventory/
   hosts.yaml              Nornir inventory: device IP, group, role
   groups.yaml              Group-level connection defaults (core vs ce: platform, netmiko device_type/secret)
   defaults.yaml            Shared vars merged into every host (NTP, syslog, OSPF auth key)
-textfsm/*.textfsm        Custom TextFSM templates: LDP neighbor + VPNv4 summary (used by healthcheck.py; ntc-templates doesn't cover these) and ospf_neighbor.textfsm (currently unused — OSPF is parsed via built-in ntc-templates)
 ci/check_vrf_consistency.py   CI gate: RD/RT must match across every PE for a given VRF name
 ci/check_data_consistency.py  CI gate: reference integrity (peer-session/policy/route-map/prefix-list/VRF), duplicate IPs, router-id uniqueness, iBGP/eBGP peer resolution, inventory<->host_vars sync
 rendered/*.cfg            Generated output of render.py — do not hand-edit, do not treat as source
@@ -36,16 +35,21 @@ useful_tips/              STALE draft notes (8-device topology, no VRF_B, pre-CI
 
 render.py                Render-only, no SSH/device contact
 deploy.py                Push-only, requires --yes, supports --limit HOST
-healthcheck.py            Baseline capture (--baseline) + structured TextFSM-parsed health comparison
-collect.py                Ad-hoc raw show-command dumper, human-reviewed, not pass/fail
+collect.py                Ad-hoc raw show-command dumper, human-reviewed, not pass/fail. Logs to logs/<timestamp>/
 save.py                   `write memory` across all devices
 test_template.py          Render one template against one/more hosts, for debugging only
+
+verification/             Everything specific to health-check verification (see below)
+  healthcheck.py            Baseline capture (--baseline) + structured TextFSM-parsed health comparison
+  baseline.json             Captured healthy-state snapshot — gitignored, environment-specific, regenerate don't edit
+  textfsm/*.textfsm         Custom TextFSM templates: LDP neighbor + VPNv4 summary (ntc-templates doesn't cover these) and ospf_neighbor.textfsm (currently unused — OSPF is parsed via built-in ntc-templates)
+  logs/*_healthcheck/       Per-run healthcheck reports
 
 Jenkinsfile               Active CI/CD pipeline definition
 old1.Jenkinsfile, old2.Jenkinsfile   Earlier pipeline iterations, kept for reference, not active
 requirements.txt          Full pinned dependency set (Nornir, Netmiko, TextFSM, pyATS/Genie, etc.)
-baseline.json             Captured healthy-state snapshot — gitignored, environment-specific, regenerate don't edit
-nornir.log                Gitignored Nornir run log
+logs/<timestamp>/         collect.py's per-run raw dumps (not healthcheck — those live under verification/logs/)
+nornir.log                Gitignored Nornir run log, shared across every script that calls InitNornir
 ```
 
 There is no `Dockerfile` / `docker-compose.yml` in this repo currently even
@@ -58,11 +62,11 @@ The scripts are independent CLI tools with no shared driver — the safe order
 is a human/CI convention, not enforced in code:
 
 ```bash
-python3 render.py                # build rendered/*.cfg locally, no device contact
-python3 healthcheck.py           # confirm network healthy BEFORE the change
-python3 deploy.py --yes          # push rendered/*.cfg (add --limit PE2 to scope to one device)
-python3 healthcheck.py           # confirm network still healthy AFTER
-python3 save.py                  # write memory — only once verified good
+python3 render.py                        # build rendered/*.cfg locally, no device contact
+python3 verification/healthcheck.py      # confirm network healthy BEFORE the change
+python3 deploy.py --yes                  # push rendered/*.cfg (add --limit PE2 to scope to one device)
+python3 verification/healthcheck.py      # confirm network still healthy AFTER
+python3 save.py                          # write memory — only once verified good
 ```
 
 `deploy.py` refuses to push and just prints this sequence if `--yes` is
@@ -73,14 +77,22 @@ Other commands:
 ```bash
 python3 test_template.py <template.j2> <host> [host2 ...]   # e.g. test_template.py bgp.j2 pe1 pe2
 python3 collect.py --task <ospf|ldp|bgp|vrf|mpls|ce|all> [--host H ...] [--group core|ce]
-python3 healthcheck.py --baseline        # (re)capture baseline.json after a confirmed-healthy state
-python3 healthcheck.py --host pe1 p1     # scope health check to specific hosts
+python3 verification/healthcheck.py --baseline        # (re)capture baseline.json after a confirmed-healthy state
+python3 verification/healthcheck.py --host pe1 p1     # scope health check to specific hosts
 ```
 
-`collect.py` and `healthcheck.py` are different trust levels: `collect.py`
-dumps raw, unparsed `show` output for a human to eyeball; `healthcheck.py` is
-structured/TextFSM-parsed/pass-fail against `baseline.json`, and is only
-meaningful once a human has used `collect.py` to bless the baseline state.
+`collect.py` and `verification/healthcheck.py` are different trust levels:
+`collect.py` dumps raw, unparsed `show` output for a human to eyeball;
+`healthcheck.py` is structured/TextFSM-parsed/pass-fail against
+`verification/baseline.json`, and is only meaningful once a human has used
+`collect.py` to bless the baseline state.
+
+`verification/healthcheck.py` lives one directory below the project root, but
+`config.yaml`/`inventory/*.yaml` are shared with `deploy.py`/`collect.py`/
+`save.py` and stay at the root — the script sets `ROOT_DIR = dirname(BASE_DIR)`
+and does `os.chdir(ROOT_DIR)` (not `BASE_DIR`) before `InitNornir(...)` for
+exactly this reason. `BASE_DIR` (the script's own dir) is still used for
+`baseline.json`, `textfsm/`, and `logs/` — keep that split if you edit it.
 
 ## Data flow & templating conventions
 
@@ -89,19 +101,22 @@ meaningful once a human has used `collect.py` to bless the baseline state.
   can live in `host_vars/*.yaml` instead.
 - `render.py` reads `host_vars/*.yaml` directly via glob — it does **not**
   go through `inventory/hosts.yaml`. Rendering and the Nornir inventory used
-  for `deploy.py`/`healthcheck.py`/`collect.py`/`save.py` are two separate
-  paths that happen to be keyed by the same hostnames.
+  for `deploy.py`/`verification/healthcheck.py`/`collect.py`/`save.py` are
+  two separate paths that happen to be keyed by the same hostnames.
 - The Nornir scripts load `config.yaml` (`InitNornir(config_file=...)`),
   which points at the `inventory/*.yaml` files and sets the threaded runner.
-  Paths in `config.yaml` are CWD-relative, so each script does
-  `os.chdir(BASE_DIR)` first — keep that line when editing the scripts.
+  Paths in `config.yaml` are CWD-relative, so each script does `os.chdir(...)`
+  to the project root first — `deploy.py`/`collect.py`/`save.py` chdir to
+  their own `BASE_DIR` (they live at the root); `verification/healthcheck.py`
+  chdirs to `ROOT_DIR` (`dirname(BASE_DIR)`) instead, since it lives one
+  level deeper. Keep that distinction if you edit any of these scripts.
 - Per-host render data is `{**defaults, **host_data}` — `inventory/defaults.yaml`
   is the base, `host_vars/<host>.yaml` overrides on conflict.
 - `templates/master.j2` composes other templates by `role`
   (`pe`/`p`/`rr`/`ce`), e.g. `vrf.j2` and `bgp_pe_ce.j2` only for `pe`,
   `bgp_ce.j2` only for `ce`. `role` lives in both `host_vars/<host>.yaml`
   and `inventory/hosts.yaml` (`data.role`) and also drives which show
-  commands `healthcheck.py`/`collect.py` run per device.
+  commands `verification/healthcheck.py`/`collect.py` run per device.
 - Output filenames are lowercase: `rendered/<hostname.lower()>.cfg`.
 
 ## CI/CD (Jenkins)
@@ -115,7 +130,7 @@ Setup venv            fresh venv, pip install -r requirements.txt
 Template Syntax Check  Jinja2 parse check on every templates/*.j2
 Render Configs         python3 render.py
 Validate               python3 ci/check_vrf_consistency.py + ci/check_data_consistency.py
-Deploy (main only)     healthcheck.py -> deploy.py --yes -> healthcheck.py -> save.py
+Deploy (main only)     verification/healthcheck.py -> deploy.py --yes -> verification/healthcheck.py -> save.py
 Tag last successful    force-moves git tag `last_deploy_tag` to the deployed commit (main only)
 ```
 
@@ -145,7 +160,8 @@ Distilled from real incidents (full writeups in `README.md`):
   different libraries.
 - Don't hand-edit `rendered/*.cfg` — it's build output. Edit
   `templates/*.j2` or `host_vars/*.yaml` and re-run `render.py`.
-- `baseline.json` and `nornir.log` are gitignored and environment-specific —
-  regenerate via `healthcheck.py --baseline`, don't hand-edit or commit them.
+- `verification/baseline.json` and `nornir.log` are gitignored and
+  environment-specific — regenerate via `verification/healthcheck.py
+  --baseline`, don't hand-edit or commit them.
 - `useful_tips/` holds older draft notes that predate VRF_B, CI, and Jenkins
   — treat `README.md` as the source of truth if they conflict.
