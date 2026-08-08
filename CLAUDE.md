@@ -103,6 +103,12 @@ exactly this reason. `BASE_DIR` (the script's own dir) is still used for
   go through `inventory/hosts.yaml`. Rendering and the Nornir inventory used
   for `deploy.py`/`verification/healthcheck.py`/`collect.py`/`save.py` are
   two separate paths that happen to be keyed by the same hostnames.
+  `host_vars/` is a hand-rolled convention, not a Nornir feature — Nornir's
+  `SimpleInventory` only ever loads the three files named in `config.yaml`.
+  Ansible-style `host_vars/` auto-loading exists in Nornir only via the
+  separate `nornir-ansible` plugin, which this repo doesn't use. Don't move
+  `host_vars/` under `inventory/` — that would imply Nornir loads it
+  automatically, which it doesn't.
 - The Nornir scripts load `config.yaml` (`InitNornir(config_file=...)`),
   which points at the `inventory/*.yaml` files and sets the threaded runner.
   Paths in `config.yaml` are CWD-relative, so each script does `os.chdir(...)`

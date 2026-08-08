@@ -1,22 +1,22 @@
 # MPLS L3VPN Network Automation — Nornir + Jenkins CI/CD
 
-A production-style network automation project built on a 10-router Cisco IOS MPLS L3VPN lab (GNS3/IOU): Nornir + Python + Jinja2 generate, validate, and deploy configuration, wired into a Jenkins CI/CD pipeline with branch-protected, PR-gated deployment.
+A network automation project built on a 10-router Cisco IOS MPLS L3VPN lab (GNS3/IOU). Nornir, Python, and Jinja2 generate, check, and push router configs, wired into a Jenkins CI/CD pipeline that only deploys after a pull request is merged to `main`.
 
 > **Companion repos:**
-> [`myansible-lab`](https://github.com/umiseaz/myansible-lab) — the same topology and Jinja2 templates, automated with Ansible instead, with its own Jenkins pipeline. Built side-by-side to compare the two ecosystems directly.
-> [`mypyats-lab`](https://github.com/umiseaz/mypyats-lab) — Cisco's own pyATS/Genie framework verifying the same lab, extended into a working AI-assisted operations layer (MCP + a locally-run model) for querying live device state.
+> [`myansible-lab`](https://github.com/umiseaz/myansible-lab) — the same lab and the same Jinja2 templates, automated with Ansible instead of Nornir. Built side by side so the two tools can be compared directly.
+> [`mypyats-lab`](https://github.com/umiseaz/mypyats-lab) — the same lab, checked with Cisco's own pyATS/Genie framework, plus an AI-assisted layer (MCP + a locally-run model) for asking questions about live device state.
 
-This project was built to develop real NetDevOps skills: infrastructure-as-code discipline, safe deployment workflows, structured state verification, and CI/CD gating — not just template rendering.
+Built to practice real NetDevOps skills: treating infrastructure as code, deploying safely, verifying network health properly, and gating changes through CI/CD — not just rendering templates.
 
 ---
 
 ## Why this project
 
-Most "network automation" tutorials stop at "render a template, push a config." This project goes further:
+Most "network automation" tutorials stop at "render a template, push a config." This one goes further:
 
-- **Functional verification, not text diffing** — health checks parse live device state (OSPF, LDP, BGP, VPNv4) via TextFSM and compare against a known-good baseline, because comparing `show running-config` text is unreliable (see [Postmortems](#postmortems))
-- **A full CI/CD pipeline in Jenkins** — every branch and pull request is validated automatically; only merges to `main` trigger a live deploy; deployments are tagged for traceability
-- **Real bugs, found and fixed with evidence** — not a clean tutorial run. Four genuinely instructive postmortems below.
+- **Checks real device state, not just text** — health checks read live OSPF/LDP/BGP/VPNv4 state with TextFSM and compare it to a known-good baseline. Comparing `show running-config` text directly is unreliable (see [Postmortems](#postmortems) for why).
+- **A real CI/CD pipeline in Jenkins** — every branch and pull request gets checked automatically. Only a merge to `main` triggers a real deploy, and every deploy gets tagged so you can tell what's actually running.
+- **Real bugs, not a clean demo** — four postmortems below, each with the actual symptom, root cause, fix, and lesson.
 
 ---
 
@@ -68,37 +68,62 @@ Two VRFs: **VRF_A** (rd 65:65001) and **VRF_B** (rd 65:65002), each spanning bot
 ## Repository structure
 
 ```
-templates/            12 Jinja2 templates — role-based, identical output to the Ansible repo
-host_vars/             Per-device YAML data — interfaces, VRFs, BGP peers, prefix-lists, route-maps (10 files)
-inventory/             Nornir inventory + shared defaults — hosts.yaml is the single source of truth for device role
-config.yaml            Nornir config — SimpleInventory paths + threaded runner, single source of truth
-                              (shared by deploy.py/collect.py/save.py/verification/healthcheck.py)
+templates/             12 Jinja2 templates, one per config feature, combined by device role
+host_vars/              One YAML file per device — its interfaces, VRFs, BGP peers, prefix-lists, route-maps
+inventory/              Nornir inventory + shared defaults — hosts.yaml is the single source of truth for device role
+config.yaml             Nornir config (used by deploy.py/collect.py/save.py/verification/healthcheck.py)
 ci/
-  check_vrf_consistency.py    CI gate — catches RD/RT mismatches before deploy
-  check_data_consistency.py   CI gate — reference integrity, duplicate IPs, router-id uniqueness,
-                              iBGP/eBGP peer resolution, inventory↔host_vars sync
-rendered/              Generated device configs (build output)
-bootstrap/              Minimal OOB bring-up configs
+  check_vrf_consistency.py    Checks RD/RT match across every PE, before any device is touched
+  check_data_consistency.py   Checks for duplicate IPs, broken references, and inventory/host_vars mismatches
+rendered/              Generated device configs — build output, don't hand-edit
+bootstrap/              Minimal configs used only to bring a device up for the first time
 
-render.py              Render-only — no SSH, no device contact (StrictUndefined: missing YAML keys fail loudly;
-                              role is looked up from inventory/hosts.yaml, not host_vars/)
-deploy.py              Push-only — requires --yes flag, supports --limit HOST
-save.py                write memory across all devices
-collect.py              Ad-hoc show-command collector (raw output, human-reviewed); logs/ holds its per-run dumps
-test_template.py        Quick single-template/single-host render for debugging
+render.py              Builds configs only, no device contact — see "How render.py works" below
+deploy.py              Pushes configs — requires --yes, supports --limit HOST
+save.py                Writes memory ("write mem") on every device
+collect.py              Ad-hoc show-command dumper for a human to read; not pass/fail
+test_template.py        Renders one template against one host, for quick debugging
 
-verification/           Everything specific to health-check verification
-  healthcheck.py          Baseline capture + structured health verification (--task to scope checks)
-  baseline.json            Captured healthy-state snapshot — regenerate after real topology changes
-  textfsm/                 Custom TextFSM templates (LDP neighbor, VPNv4 summary)
-  logs/                    Per-run healthcheck reports (*_healthcheck/)
+verification/           Everything needed to check the network is actually healthy
+  healthcheck.py           Captures a baseline, then checks live state against it (--task to limit checks)
+  baseline.json            The saved "known-good" state — regenerate after a real topology change
+  textfsm/                 Custom parsing templates for commands ntc-templates doesn't cover
+  logs/                    One folder per health-check run
 
-Jenkinsfile             Branch-aware CI/CD pipeline definition
+Jenkinsfile             The Jenkins CI/CD pipeline
 ```
 
 The custom Jenkins image (`Dockerfile` with Python, yamllint, git, sshpass,
-legacy SSH config) and its `docker-compose.yml` deployment live on the Jenkins
-host, not in this repo.
+and legacy SSH settings) and its `docker-compose.yml` live on the Jenkins
+host itself, not in this repo.
+
+---
+
+## How render.py works
+
+`render.py` turns per-device YAML into router configs. No SSH, no device
+contact — just files in, files out.
+
+1. Reads `inventory/defaults.yaml` (settings shared by every device) and
+   `inventory/hosts.yaml` (used only to look up each device's role).
+2. Reads every file in `host_vars/*.yaml` — one file per device, holding its
+   interfaces, VRFs, BGP peers, prefix-lists, and route-maps.
+3. For each device: merges the defaults with that device's data, then sets
+   `role` from `inventory/hosts.yaml` — the single source of truth for role.
+4. Renders `templates/master.j2` with that merged data. `master.j2` pulls in
+   the right sub-templates based on `role` (e.g. only PEs get `vrf.j2`).
+5. Writes the result to `rendered/<device>.cfg`.
+
+**One gotcha:** both files use the word "hostname," but they mean different
+things. In `host_vars/pe1.yaml`, `hostname: PE1` is the device's *name*. In
+`inventory/hosts.yaml`, the `hostname:` field is the device's *management IP*
+(e.g. `10.1.1.1`), used by Nornir to actually SSH in. `render.py` matches the
+two files by device name only — it never touches the IP.
+
+If a `host_vars` file is broken or missing its `hostname` key, that one
+device is skipped and logged — the rest still render. Any missing or
+typo'd Jinja2 variable fails the whole render loudly (`StrictUndefined`),
+instead of silently producing a blank line in a router config.
 
 ---
 
@@ -124,13 +149,18 @@ python3 verification/healthcheck.py
 python3 save.py
 ```
 
-`collect.py` and `healthcheck.py` serve two different trust levels: `collect.py` dumps raw, unparsed `show` output for a human to judge; `healthcheck.py` is structured, TextFSM-parsed, pass/fail — and is only trustworthy once a human has used `collect.py` to bless the state it's comparing against.
+`collect.py` and `healthcheck.py` are trusted differently: `collect.py` just
+dumps raw `show` output for a person to read; `healthcheck.py` is the strict,
+pass/fail check against `baseline.json` — and that baseline is only
+trustworthy once a person has used `collect.py` to confirm the network was
+actually healthy first.
 
 ---
 
 ## CI/CD pipeline (Jenkins)
 
-A Multibranch Pipeline scans the GitHub repo, builds every branch and pull request, and reports status directly on the PR.
+A Multibranch Pipeline watches the GitHub repo. It builds every branch and
+pull request, and posts the result straight onto the PR.
 
 ```
 Feature branch pushed
@@ -152,61 +182,105 @@ Pull Request → reviewed → merged to main
    → Tag `last_deploy_tag` moved to the deployed commit
 ```
 
-`git log last_deploy_tag..main --oneline` answers "is `main` ahead of what's actually running on the devices."
+`git log last_deploy_tag..main --oneline` tells you whether `main` has
+changes that haven't been deployed to the real devices yet.
 
-> **Note:** GitHub branch protection rules are configured but not enforced — this is a free-tier private repo, and GitHub only enforces protection rules on public repos or paid Team/Enterprise plans. The PR-gated workflow is followed as team discipline, matching how it would run in an enforced environment.
+> **Note:** GitHub's branch protection rules are turned on but not actually
+> enforced — this is a free-tier private repo, and GitHub only enforces
+> protection rules on public repos or paid Team/Enterprise plans. The
+> PR-first workflow is followed here as team discipline, the same way it
+> would run if enforcement were switched on.
 
 ---
 
 ## Postmortems
 
-Real bugs hit and diagnosed during this build.
+Real bugs hit and fixed while building this — not a clean tutorial run.
 
 ### 1. IOS rejects a second `address-family` block pushed back-to-back
 
-**Symptom:** `exit-address-family` / `exit-address-family` — `% Invalid input` — reproducible, but only on PE2, not PE1, despite identical data structures.
+**Symptom:** `% Invalid input` on `exit-address-family` — reproducible, but
+only on PE2, not PE1, even though both had the same kind of data.
 
-**Root cause:** Two consecutive `address-family ipv4 vrf X` blocks pushed via `netmiko_send_config` with no `!` separator between them confuse the IOS CLI parser under live automation, even though the exact same text pastes cleanly by hand into a console with natural typing delay.
+**Root cause:** Two `address-family ipv4 vrf X` blocks pushed back-to-back,
+with no `!` between them, confuse IOS's CLI parser when pushed by
+automation — even though the exact same text pastes in fine by hand, because
+a human typing naturally leaves a small delay between lines.
 
-**Fix:** Added an explicit `!` after every `exit-address-family` inside the Jinja2 loops in `vrf.j2` and `bgp_pe_ce.j2`. `deploy.py` preserves bare `!` separator lines when pushing (it strips only blank lines and `!`-prefixed comment text) so the separators actually reach the device.
+**Fix:** Added an explicit `!` after every `exit-address-family` inside the
+Jinja2 loops in `vrf.j2` and `bgp_pe_ce.j2`. `deploy.py` keeps those bare `!`
+lines when it pushes config (it only strips blank lines and `!`-comment
+lines) so the separators actually reach the device.
 
-**Lesson:** A config that's syntactically valid IOS and pastes fine by hand is not the same guarantee as a config that survives automated bulk push.
+**Lesson:** A config being valid IOS and pasting fine by hand doesn't
+guarantee it survives an automated bulk push.
 
-### 2. Legacy IOS SSH crypto vs modern SSH clients (Paramiko)
+### 2. Legacy IOS SSH crypto vs. a modern SSH client (Paramiko)
 
-**Symptom:** `kex error: no match for method mac algo` — Paramiko 5.0 dropped `hmac-sha1` support; the lab's IOS image only supports `hmac-sha1`/`hmac-sha1-96`.
+**Symptom:** `kex error: no match for method mac algo` — Paramiko 5.0
+dropped support for `hmac-sha1`, and this lab's IOS image only supports
+`hmac-sha1`/`hmac-sha1-96`.
 
-**Fix:** Installed `ansible-pylibssh` and set `ansible_network_cli_ssh_type: libssh`, which negotiates legacy algorithms Paramiko refuses by default.
+**Fix:** Installed `ansible-pylibssh` and set
+`ansible_network_cli_ssh_type: libssh`, which still negotiates those older
+algorithms.
 
-**Lesson:** Legacy Cisco gear is common in the real world; SSH library version bumps that "improve security" can silently break connectivity to it.
+**Lesson:** Old Cisco gear is common in the real world. An SSH library
+update that "improves security" can quietly break connectivity to it.
 
-### 3. A stale RD value that idempotent config push can't self-correct
+### 3. A wrong RD value that config push can't fix on its own
 
-**Symptom:** Same `% Invalid input` error, persisted even after a full `no router bgp 65` rebuild on the device.
+**Symptom:** The same `% Invalid input` error, even after fully rebuilding
+`router bgp 65` on the device.
 
-**Root cause:** `PE2`'s `VRF_A` had the wrong RD (`65:65002`, copy-pasted from VRF_B) already pushed and saved. Config-merge tools only ever *add* lines that are textually absent from the running-config — they don't detect "this value is wrong and needs to change," because that requires an explicit `no rd X` before the new `rd Y` can apply.
+**Root cause:** PE2's `VRF_A` already had the wrong RD saved on the device
+(`65:65002`, copy-pasted from VRF_B). Config-merge tools only ever *add*
+lines that aren't already in the running config — they can't tell "this
+value is wrong now," because fixing that needs an explicit `no rd X` before
+the correct `rd Y` can be applied.
 
-**Fix:** Manually corrected the device-side RD, then added `ci/check_vrf_consistency.py` as a CI gate — every push now checks RD/RT consistency across all PEs *before* any device is touched.
+**Fix:** Fixed the RD by hand on the device, then added
+`ci/check_vrf_consistency.py` as a CI check — every push now checks that
+RD/RT values match across all PEs before touching any device.
 
-**Lesson:** Idempotent config push tools are additive by default. Value *changes* need either explicit removal logic or a data-layer consistency check.
+**Lesson:** Config push tools add, they don't correct. Any value that might
+*change* needs either explicit removal logic or a check that catches the
+mismatch before it's pushed.
 
-### 4. The same crypto problem resurfaced through a completely different library
+### 4. The same crypto problem came back through a different library
 
-**Symptom:** Building the sibling Ansible pipeline's Jenkins job, deployment failed with `kex error: no match for method kex algos` — a *key exchange* mismatch this time, not MAC.
+**Symptom:** While setting up the sibling Ansible pipeline's Jenkins job,
+deployment failed with `kex error: no match for method kex algos` — a
+key-exchange mismatch this time, not MAC.
 
-**Root cause:** Same root issue as postmortem #2 (legacy IOS crypto vs. a modern SSH client), but surfacing through `ansible-pylibssh`/`libssh` instead of Paramiko, in a completely different environment (Jenkins' own containerized Python), with a different algorithm family (KEX, not MAC) and a different mismatched pair of clients.
+**Root cause:** Same underlying issue as #2 — legacy IOS crypto vs. a modern
+SSH client — but surfacing through `ansible-pylibssh`/`libssh` instead of
+Paramiko, in a different environment (Jenkins' own container), with a
+different algorithm family (KEX, not MAC).
 
-**Fix:** Baked an `~/.ssh/config` with `KexAlgorithms +diffie-hellman-group14-sha1`, `MACs +hmac-sha1`, `HostKeyAlgorithms +ssh-rsa`, `PubkeyAcceptedAlgorithms +ssh-rsa` directly into the Jenkins Docker image.
+**Fix:** Baked an `~/.ssh/config` into the Jenkins Docker image with
+`KexAlgorithms +diffie-hellman-group14-sha1`, `MACs +hmac-sha1`,
+`HostKeyAlgorithms +ssh-rsa`, and `PubkeyAcceptedAlgorithms +ssh-rsa`.
 
-**Lesson:** Recognizing a bug as *the same class of problem as before* — not just "another SSH error" — made diagnosis much faster the second time. Legacy device compatibility is a recurring category, not a one-off; it's worth having a standard playbook for it (relax specific algorithms at the client, don't fight the device).
+**Lesson:** Spotting that this was *the same kind of problem* as before —
+not just "another SSH error" — made it much faster to fix the second time.
+Legacy device compatibility keeps coming back; it's worth having a standard
+fix ready (relax the specific algorithm on the client side, don't fight the
+device).
 
 ---
 
 ## What this project demonstrates
 
-- Infrastructure-as-code: data (YAML) and logic (Jinja2) cleanly separated, portable across two different automation engines (see the Ansible sibling repo) with byte-identical output
-- Safe deployment discipline: render/deploy/save as distinct, explicitly-gated steps
-- Structured state verification over naive config diffing, with a clear understanding of *why* text-diffing running-config is unreliable
-- CI/CD pipeline design: fast-fail checks before expensive ones, branch-aware stage gating, PR-based review workflow
-- Real-world debugging: SSH/crypto compatibility (twice, via two different libraries), IOS CLI automation quirks, and idempotency limitations — diagnosed with evidence, not guesswork
-
+- Infrastructure as code: data (YAML) and logic (Jinja2) kept separate, so
+  the same templates work with two different automation tools and produce
+  identical output
+- Safe deployment habits: render, deploy, and save kept as separate steps
+  that each need explicit confirmation
+- Checking real device state instead of just diffing config text, and
+  understanding why text-diffing running-config isn't reliable
+- CI/CD design: cheap checks run first, branch-aware deploy gating, changes
+  reviewed through pull requests
+- Real debugging: SSH/crypto issues (twice, through two different
+  libraries), IOS CLI quirks, and the limits of idempotent config push — all
+  diagnosed with evidence, not guesses
