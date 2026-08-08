@@ -69,8 +69,8 @@ Two VRFs: **VRF_A** (rd 65:65001) and **VRF_B** (rd 65:65002), each spanning bot
 
 ```
 templates/            12 Jinja2 templates — role-based, identical output to the Ansible repo
-host_vars/             Per-device YAML data (10 files)
-inventory/             Nornir inventory + shared defaults
+host_vars/             Per-device YAML data — interfaces, VRFs, BGP peers, prefix-lists, route-maps (10 files)
+inventory/             Nornir inventory + shared defaults — hosts.yaml is the single source of truth for device role
 config.yaml            Nornir config — SimpleInventory paths + threaded runner, single source of truth
 textfsm/               Custom TextFSM templates (LDP neighbor, VPNv4 summary)
 ci/
@@ -80,7 +80,8 @@ ci/
 rendered/              Generated device configs (build output)
 bootstrap/              Minimal OOB bring-up configs
 
-render.py              Render-only — no SSH, no device contact (StrictUndefined: missing YAML keys fail loudly)
+render.py              Render-only — no SSH, no device contact (StrictUndefined: missing YAML keys fail loudly;
+                              role is looked up from inventory/hosts.yaml, not host_vars/)
 deploy.py              Push-only — requires --yes flag, supports --limit HOST
 save.py                write memory across all devices
 healthcheck.py          Baseline capture + structured health verification (--task to scope checks)
