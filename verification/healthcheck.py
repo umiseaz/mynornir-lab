@@ -33,6 +33,7 @@ RESET  = "\033[0m"
 BOLD   = "\033[1m"
 
 BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR    = os.path.dirname(BASE_DIR)  # project root — config.yaml/inventory/ live here
 BASELINE    = os.path.join(BASE_DIR, "baseline.json")
 NTC_PATH    = os.path.dirname(ntc_templates.__file__)
 CUSTOM_FSM  = os.path.join(BASE_DIR, "textfsm")
@@ -338,8 +339,9 @@ def main():
                         help="Run only this check (default: all)")
     args = parser.parse_args()
 
-    # Init Nornir — config.yaml paths are CWD-relative
-    os.chdir(BASE_DIR)
+    # Init Nornir — config.yaml paths are CWD-relative, and config.yaml lives
+    # at the project root (shared with deploy.py/collect.py/save.py), not here
+    os.chdir(ROOT_DIR)
     nr = InitNornir(config_file="config.yaml")
 
     # Filter hosts if specified
