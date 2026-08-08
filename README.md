@@ -2,7 +2,9 @@
 
 A production-style network automation project built on a 10-router Cisco IOS MPLS L3VPN lab (GNS3/IOU): Nornir + Python + Jinja2 generate, validate, and deploy configuration, wired into a Jenkins CI/CD pipeline with branch-protected, PR-gated deployment.
 
-> **Companion repo:** [`myansible-lab`](https://github.com/umiseaz/myansible-lab) — the same topology and Jinja2 templates, automated with Ansible instead, with its own Jenkins pipeline. Built side-by-side to compare the two ecosystems directly.
+> **Companion repos:**
+> [`myansible-lab`](https://github.com/umiseaz/myansible-lab) — the same topology and Jinja2 templates, automated with Ansible instead, with its own Jenkins pipeline. Built side-by-side to compare the two ecosystems directly.
+> [`mypyats-lab`](https://github.com/umiseaz/mypyats-lab) — Cisco's own pyATS/Genie framework verifying the same lab, extended into a working AI-assisted operations layer (MCP + a locally-run model) for querying live device state.
 
 This project was built to develop real NetDevOps skills: infrastructure-as-code discipline, safe deployment workflows, structured state verification, and CI/CD gating — not just template rendering.
 
