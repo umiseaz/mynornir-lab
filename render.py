@@ -20,6 +20,10 @@ env = Environment(
 with open(os.path.join(BASE_DIR, "inventory/defaults.yaml")) as f:
     defaults = yaml.safe_load(f) or {}
 
+# ── Load inventory hosts (role is sourced from here) ───────
+with open(os.path.join(BASE_DIR, "inventory/hosts.yaml")) as f:
+    inventory_hosts = yaml.safe_load(f) or {}
+
 # ── Render only — no SSH, no device contact at all ────────
 host_files = sorted(glob.glob(os.path.join(BASE_DIR, "host_vars/*.yaml")))
 
@@ -43,6 +47,10 @@ for host_file in host_files:
 
     data = {**defaults, **host_data}
     hostname = data["hostname"]
+
+    role = inventory_hosts.get(hostname, {}).get("data", {}).get("role")
+    if role is not None:
+        data["role"] = role
 
     try:
         rendered = env.get_template("master.j2").render(**data)

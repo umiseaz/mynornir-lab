@@ -19,6 +19,7 @@ env = Environment(
 )
 
 defaults = yaml.safe_load(open(os.path.join(BASE_DIR, "inventory/defaults.yaml"))) or {}
+inventory_hosts = yaml.safe_load(open(os.path.join(BASE_DIR, "inventory/hosts.yaml"))) or {}
 
 if not hosts:
     print("Usage: python3 test_template.py <template> <host1> [host2] ...")
@@ -31,6 +32,12 @@ for host in hosts:
         continue
     host_data = yaml.safe_load(open(yaml_path))
     data = {**defaults, **host_data}
+
+    hostname = data["hostname"]
+    role = inventory_hosts.get(hostname, {}).get("data", {}).get("role")
+    if role is not None:
+        data["role"] = role
+
     print(f"=== {host} ===")
     print(env.get_template(template_name).render(**data))
     print()

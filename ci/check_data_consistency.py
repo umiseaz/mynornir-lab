@@ -22,7 +22,6 @@ data bug that render fine but break the network (or the push) later:
 
   Inventory <-> host_vars sync
     - every host_vars file has a matching inventory entry and vice versa
-    - role in host_vars matches inventory data.role
 
 Exit codes:
     0 — all checks passed
@@ -340,12 +339,6 @@ def check_inventory_sync(hosts):
             fail(f"{hostname}: in host_vars but missing from inventory/hosts.yaml")
             clean = False
             continue
-        _, entry = inv_lower[hostname.lower()]
-        inv_role = (entry.get("data") or {}).get("role")
-        if inv_role != data.get("role"):
-            fail(f"{hostname}: role '{data.get('role')}' in host_vars but "
-                 f"'{inv_role}' in inventory/hosts.yaml")
-            clean = False
 
     for name in inventory:
         if name.lower() not in hv_lower:
@@ -353,7 +346,7 @@ def check_inventory_sync(hosts):
             clean = False
 
     if clean:
-        ok(f"{len(hosts)} host_vars files match {len(inventory)} inventory entries (names and roles)")
+        ok(f"{len(hosts)} host_vars files match {len(inventory)} inventory entries (names)")
 
 
 def main():
