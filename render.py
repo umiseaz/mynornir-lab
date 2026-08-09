@@ -29,6 +29,10 @@ with open(os.path.join(BASE_DIR, "inventory/defaults.yaml")) as f:
 with open(os.path.join(BASE_DIR, "inventory/hosts.yaml")) as f:
     inventory_hosts = yaml.safe_load(f) or {}
 
+# rendered/ is gitignored (contains real secrets once rendered) and won't
+# exist on a fresh checkout — create it if missing rather than assuming.
+os.makedirs(os.path.join(BASE_DIR, "rendered"), exist_ok=True)
+
 # ── Render only — no SSH, no device contact at all ────────
 host_files = sorted(glob.glob(os.path.join(BASE_DIR, "host_vars/*.yaml")))
 
