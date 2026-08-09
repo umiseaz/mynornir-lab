@@ -133,9 +133,39 @@ instead of silently producing a blank line in a router config.
 
 ## Secrets management
 
-No real password, enable secret, OSPF key, or BGP session password lives in
-this repo. Every one of them is a `"${VAR_NAME}"` placeholder in the YAML,
-filled in at runtime from environment variables:
+**Why this exists:** this repo is public on GitHub. Before this change, real
+router passwords sat in plain text inside the YAML files — anyone who could
+see the code could read the passwords. Now the YAML only holds a label like
+`${NORNIR_PASSWORD}`; the real value lives in one file on your own computer
+that never gets uploaded.
+
+**A concrete before/after**, from `inventory/defaults.yaml`:
+```yaml
+# Before — the real password, committed to git for anyone to read
+password: admin
+
+# After — just a label, safe to commit
+password: "${NORNIR_PASSWORD}"
+```
+`${NORNIR_PASSWORD}` means "look this up somewhere else" — that somewhere
+else is your local `.env` file, which holds the actual value:
+```
+NORNIR_PASSWORD=admin
+```
+
+**The journey a password takes when you run a script:**
+```
+.env file (your computer only — never uploaded to GitHub)
+   → python-dotenv loads it into memory when the script starts
+   → secrets_resolver.py / nornir_transform.py spot "${NORNIR_PASSWORD}" in the YAML
+   → look up NORNIR_PASSWORD in memory, swap the label for the real value
+   → the real password is what actually gets used to log into the router
+```
+The label is the only thing that ever ends up in git. The real value never
+leaves `.env` on your machine (or, in Jenkins, Jenkins's own credential
+store — see below).
+
+**What you actually have to do, in short:**
 
 1. `cp .env.example .env` once, then fill in the real values.
 2. Every script picks them up automatically (`python-dotenv` loads `.env`
@@ -144,6 +174,19 @@ filled in at runtime from environment variables:
 3. If a variable is missing, the script fails immediately with a clear error
    naming exactly which one — it never silently renders the literal text
    `${VAR_NAME}` into a config.
+
+Two small files do the actual work, used by two different groups of scripts:
+
+- **`secrets_resolver.py`** — the generic "fill in the blank" tool. Used
+  directly by `render.py` and `test_template.py`, since neither of those
+  goes through Nornir at all — they load YAML by hand and fill in their own
+  blanks before rendering.
+- **`nornir_transform.py`** — built on top of `secrets_resolver.py`, but
+  wired specifically into Nornir's startup: it fills in the blanks on every
+  device right after Nornir loads its router list, before any password gets
+  used for real. This is what `deploy.py`, `collect.py`, `save.py`, and
+  `verification/healthcheck.py` rely on — every script that goes through
+  Nornir's router list uses this one, not `secrets_resolver.py` directly.
 
 In Jenkins, the same variables come from Jenkins credentials instead of a
 `.env` file — the pipeline needs `lab-router-admin-creds`,
