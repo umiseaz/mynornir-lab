@@ -1,5 +1,5 @@
 # host_vars/ce3.yaml
-hostname: CE3
+device_name: CE3
 loopback_name: Loopback0
 iou: 9
 

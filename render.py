@@ -49,13 +49,13 @@ for host_file in host_files:
         failed.append(rel)
         continue
 
-    if not isinstance(host_data, dict) or "hostname" not in host_data:
-        print(f"[!] {rel}: missing required key 'hostname'")
+    if not isinstance(host_data, dict) or "device_name" not in host_data:
+        print(f"[!] {rel}: missing required key 'device_name'")
         failed.append(rel)
         continue
 
     data = resolve_deep({**defaults, **host_data})
-    hostname = data["hostname"]
+    hostname = data["device_name"]
 
     role = inventory_hosts.get(hostname, {}).get("data", {}).get("role")
     if role is not None:

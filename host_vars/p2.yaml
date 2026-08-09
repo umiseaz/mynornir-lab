@@ -1,5 +1,5 @@
 # host_vars/p2.yaml
-hostname: P2
+device_name: P2
 loopback_name: Loopback0
 iou: 3
 

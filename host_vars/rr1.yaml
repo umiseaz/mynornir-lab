@@ -1,5 +1,5 @@
 # host_vars/rr1.yaml
-hostname: RR1
+device_name: RR1
 loopback_name: Loopback0
 iou: 5
 

@@ -118,13 +118,16 @@ contact — just files in, files out.
    the right sub-templates based on `role` (e.g. only PEs get `vrf.j2`).
 5. Writes the result to `rendered/<device>.cfg`.
 
-**One gotcha:** both files use the word "hostname," but they mean different
-things. In `host_vars/pe1.yaml`, `hostname: PE1` is the device's *name*. In
-`inventory/hosts.yaml`, the `hostname:` field is the device's *management IP*
-(e.g. `10.1.1.1`), used by Nornir to actually SSH in. `render.py` matches the
-two files by device name only — it never touches the IP.
+**Historical gotcha (fixed):** both files used to use the word "hostname,"
+but meant different things — in `host_vars/pe1.yaml`, `hostname: PE1` was
+the device's *name*, while in `inventory/hosts.yaml`, `hostname:` was the
+device's *management IP* (e.g. `10.1.1.1`) used by Nornir to actually SSH
+in. The shared name made it easy to confuse the two. This was resolved by
+renaming the `host_vars/*.yaml` field to `device_name`, so `inventory/hosts.yaml`'s
+`hostname:` is now the only field with that name, and it unambiguously means
+the management IP.
 
-If a `host_vars` file is broken or missing its `hostname` key, that one
+If a `host_vars` file is broken or missing its `device_name` key, that one
 device is skipped and logged — the rest still render. Any missing or
 typo'd Jinja2 variable fails the whole render loudly (`StrictUndefined`),
 instead of silently producing a blank line in a router config.

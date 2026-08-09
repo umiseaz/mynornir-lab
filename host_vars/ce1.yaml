@@ -1,5 +1,5 @@
 # host_vars/ce1.yaml
-hostname: CE1
+device_name: CE1
 loopback_name: Loopback0
 iou: 7
 

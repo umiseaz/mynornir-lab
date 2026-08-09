@@ -38,7 +38,7 @@ for host in hosts:
     host_data = yaml.safe_load(open(yaml_path))
     data = resolve_deep({**defaults, **host_data})
 
-    hostname = data["hostname"]
+    hostname = data["device_name"]
     role = inventory_hosts.get(hostname, {}).get("data", {}).get("role")
     if role is not None:
         data["role"] = role

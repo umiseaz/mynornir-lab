@@ -1,5 +1,5 @@
 # host_vars/ce4.yaml
-hostname: CE4
+device_name: CE4
 loopback_name: Loopback0
 iou: 10
 

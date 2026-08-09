@@ -36,7 +36,6 @@ ci/check_data_consistency.py  CI gate: reference integrity (peer-session/policy/
 rendered/*.cfg            Generated output of render.py — do not hand-edit, do not treat as source.
                           Gitignored: contains real secrets once rendered. Regenerate via render.py.
 bootstrap/*.cfg           Minimal OOB bring-up configs (not touched by render.py)
-useful_tips/              STALE draft notes (8-device topology, no VRF_B, pre-CI). README.md supersedes it.
 
 secrets_resolver.py       resolve()/resolve_deep() — turns "${VAR}" placeholder strings into real values
                           read from os.environ. Shared by both secrets-resolution call sites below.

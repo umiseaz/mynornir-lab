@@ -34,7 +34,7 @@ def main():
         with open(host_file) as f:
             data = yaml.safe_load(f)
 
-        hostname = data.get("hostname", os.path.basename(host_file))
+        hostname = data.get("device_name", os.path.basename(host_file))
         vrfs = data.get("vrfs", [])
 
         for vrf in vrfs:

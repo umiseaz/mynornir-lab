@@ -62,18 +62,18 @@ def section(title):
 
 
 def load_hosts():
-    """hostname -> host_vars data, plus the filename stem for sync checks."""
+    """device_name -> host_vars data, plus the filename stem for sync checks."""
     hosts = {}
     for path in sorted(glob.glob(os.path.join(BASE_DIR, "host_vars/*.yaml"))):
         stem = os.path.splitext(os.path.basename(path))[0]
         with open(path) as f:
             data = yaml.safe_load(f) or {}
-        hostname = data.get("hostname")
+        hostname = data.get("device_name")
         if not hostname:
-            fail(f"host_vars/{stem}.yaml: missing 'hostname' key")
+            fail(f"host_vars/{stem}.yaml: missing 'device_name' key")
             continue
         if hostname.lower() != stem.lower():
-            fail(f"host_vars/{stem}.yaml: hostname '{hostname}' does not match filename")
+            fail(f"host_vars/{stem}.yaml: device_name '{hostname}' does not match filename")
         data["_file"] = stem
         hosts[hostname] = data
     return hosts
