@@ -18,7 +18,7 @@ interfaces:
     ip: 77.77.77.77
     mask: 255.255.255.255
   - name: Ethernet1/0
-    description: "link to PE1"
+    description: "link to PE1 - test"
     ip: 172.1.17.7
     mask: 255.255.255.0
 
