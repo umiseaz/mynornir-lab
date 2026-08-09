@@ -7,6 +7,7 @@ inventory:
     host_file: "inventory/hosts.yaml"
     group_file: "inventory/groups.yaml"
     defaults_file: "inventory/defaults.yaml"
+  transform_function: "inject_credentials"
 
 runner:
   plugin: threaded

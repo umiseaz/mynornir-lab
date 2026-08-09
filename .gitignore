@@ -11,3 +11,9 @@ baseline.json
 __pycache__/
 *.pyc
 *.pyo
+
+# Local secrets — never commit
+.env
+
+# Rendered configs contain real secrets post-render — regenerate via render.py
+rendered/

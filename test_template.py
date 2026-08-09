@@ -1,12 +1,17 @@
 import os
 import sys
 import yaml
+from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
+
+from secrets_resolver import resolve_deep
 
 # Usage: python3 test_template.py bgp.j2 pe1
 # Or:    python3 test_template.py bgp.j2 pe1 pe2 rr1
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 template_name = sys.argv[1]
 hosts = sys.argv[2:] if len(sys.argv) > 2 else []
@@ -31,7 +36,7 @@ for host in hosts:
         print(f"[!] {yaml_path} not found")
         continue
     host_data = yaml.safe_load(open(yaml_path))
-    data = {**defaults, **host_data}
+    data = resolve_deep({**defaults, **host_data})
 
     hostname = data["hostname"]
     role = inventory_hosts.get(hostname, {}).get("data", {}).get("role")

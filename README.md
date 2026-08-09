@@ -75,8 +75,12 @@ config.yaml             Nornir config (used by deploy.py/collect.py/save.py/veri
 ci/
   check_vrf_consistency.py    Checks RD/RT match across every PE, before any device is touched
   check_data_consistency.py   Checks for duplicate IPs, broken references, and inventory/host_vars mismatches
-rendered/              Generated device configs — build output, don't hand-edit
+rendered/              Generated device configs — gitignored, contains real secrets, regenerate with render.py
 bootstrap/              Minimal configs used only to bring a device up for the first time
+
+secrets_resolver.py     Turns "${VAR}" placeholders into real values from the environment — see "Secrets" below
+nornir_transform.py     Resolves credentials on each device right after Nornir loads its inventory
+.env.example            Template listing every secret this project needs (no real values, safe to commit)
 
 render.py              Builds configs only, no device contact — see "How render.py works" below
 deploy.py              Pushes configs — requires --yes, supports --limit HOST
@@ -124,6 +128,32 @@ If a `host_vars` file is broken or missing its `hostname` key, that one
 device is skipped and logged — the rest still render. Any missing or
 typo'd Jinja2 variable fails the whole render loudly (`StrictUndefined`),
 instead of silently producing a blank line in a router config.
+
+---
+
+## Secrets management
+
+No real password, enable secret, OSPF key, or BGP session password lives in
+this repo. Every one of them is a `"${VAR_NAME}"` placeholder in the YAML,
+filled in at runtime from environment variables:
+
+1. `cp .env.example .env` once, then fill in the real values.
+2. Every script picks them up automatically (`python-dotenv` loads `.env`
+   before anything else runs) — no `export`, no typing a password on the
+   command line.
+3. If a variable is missing, the script fails immediately with a clear error
+   naming exactly which one — it never silently renders the literal text
+   `${VAR_NAME}` into a config.
+
+In Jenkins, the same variables come from Jenkins credentials instead of a
+`.env` file — the pipeline needs `lab-router-admin-creds`,
+`lab-router-enable-secret`, `lab-ospf-auth-key`, and `lab-bgp-peer-password`
+set up before the `Render Configs` and `Deploy (main only)` stages will pass.
+
+If you're rotating these values on the real devices, do that *before*
+changing `.env` — the old values already exist in git history and in every
+previously-rendered `.cfg`, so rotating on the devices is what actually
+matters, not just editing this repo.
 
 ---
 

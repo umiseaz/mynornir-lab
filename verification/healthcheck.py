@@ -38,6 +38,15 @@ BASELINE    = os.path.join(BASE_DIR, "baseline.json")
 NTC_PATH    = os.path.dirname(ntc_templates.__file__)
 CUSTOM_FSM  = os.path.join(BASE_DIR, "textfsm")
 
+# nornir_transform.py lives at the project root, not next to this script
+sys.path.insert(0, ROOT_DIR)
+from dotenv import load_dotenv
+from nornir.core.plugins.inventory import TransformFunctionRegister
+from nornir_transform import inject_credentials
+
+load_dotenv(os.path.join(ROOT_DIR, ".env"))
+TransformFunctionRegister.register("inject_credentials", inject_credentials)
+
 # ── Commands to collect per role ─────────────────────────────
 # use_textfsm: True  = ntc-templates (built-in)
 # use_textfsm: False = custom TextFSM template

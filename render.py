@@ -2,9 +2,14 @@ import os
 import sys
 import yaml
 import glob
+from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
+from secrets_resolver import resolve_deep
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # ── Jinja2 environment ────────────────────────────────────
 # StrictUndefined: a missing/typo'd YAML key fails the render loudly
@@ -45,7 +50,7 @@ for host_file in host_files:
         failed.append(rel)
         continue
 
-    data = {**defaults, **host_data}
+    data = resolve_deep({**defaults, **host_data})
     hostname = data["hostname"]
 
     role = inventory_hosts.get(hostname, {}).get("data", {}).get("role")

@@ -18,10 +18,13 @@ import os
 import sys
 import argparse
 import datetime
+from dotenv import load_dotenv
 from nornir import InitNornir
+from nornir.core.plugins.inventory import TransformFunctionRegister
 from nornir_netmiko.tasks import netmiko_send_command
 from nornir_utils.plugins.functions import print_result
 from nornir.core.filter import F
+from nornir_transform import inject_credentials
 
 # ── Color codes ──────────────────────────────────────────────
 GREEN  = "\033[92m"
@@ -32,6 +35,9 @@ RESET  = "\033[0m"
 BOLD   = "\033[1m"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+load_dotenv(os.path.join(BASE_DIR, ".env"))
+TransformFunctionRegister.register("inject_credentials", inject_credentials)
 
 # ── Task definitions ─────────────────────────────────────────
 # Role-based commands — only run on routers where they make sense

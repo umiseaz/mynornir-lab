@@ -21,17 +21,29 @@ template output/behavior here, it's worth knowing that repo exists.
 
 ```
 templates/*.j2          12 Jinja2 templates, role-based, included by master.j2
-host_vars/*.yaml         Per-device data: interfaces, vrfs, bgp peers, prefix-lists, route-maps (10 files)
-config.yaml              Nornir config: SimpleInventory file paths + threaded runner (num_workers)
+host_vars/*.yaml         Per-device data: interfaces, vrfs, bgp peers, prefix-lists, route-maps (10 files).
+                         BGP peer-session password is "${BGP_PEER_PASSWORD}" — resolved from .env, see below.
+config.yaml              Nornir config: SimpleInventory file paths + threaded runner (num_workers) +
+                         transform_function: inject_credentials (resolves secrets after inventory load)
 inventory/
   hosts.yaml              Nornir inventory: device IP, group, role
-  groups.yaml              Group-level connection defaults (core vs ce: platform, netmiko device_type/secret)
-  defaults.yaml            Shared vars merged into every host (NTP, syslog, OSPF auth key)
+  groups.yaml              Group-level connection defaults (core vs ce: platform, netmiko device_type/secret).
+                           secret is "${NORNIR_ENABLE_SECRET}" — resolved from .env, see below.
+  defaults.yaml            Shared vars merged into every host (NTP, syslog, OSPF auth key, username/password).
+                           username/password/ospf_auth.key are "${VAR}" placeholders — resolved from .env.
 ci/check_vrf_consistency.py   CI gate: RD/RT must match across every PE for a given VRF name
 ci/check_data_consistency.py  CI gate: reference integrity (peer-session/policy/route-map/prefix-list/VRF), duplicate IPs, router-id uniqueness, iBGP/eBGP peer resolution, inventory<->host_vars sync
-rendered/*.cfg            Generated output of render.py — do not hand-edit, do not treat as source
+rendered/*.cfg            Generated output of render.py — do not hand-edit, do not treat as source.
+                          Gitignored: contains real secrets once rendered. Regenerate via render.py.
 bootstrap/*.cfg           Minimal OOB bring-up configs (not touched by render.py)
 useful_tips/              STALE draft notes (8-device topology, no VRF_B, pre-CI). README.md supersedes it.
+
+secrets_resolver.py       resolve()/resolve_deep() — turns "${VAR}" placeholder strings into real values
+                          read from os.environ. Shared by both secrets-resolution call sites below.
+nornir_transform.py       inject_credentials(host) — the Nornir transform_function; resolves
+                          username/password/enable-secret on each Host after inventory load
+.env.example              Committed template listing every required env var (placeholder values only)
+.env                      Gitignored, local-only, real secret values — copy from .env.example
 
 render.py                Render-only, no SSH/device contact
 deploy.py                Push-only, requires --yes, supports --limit HOST
@@ -94,6 +106,36 @@ and does `os.chdir(ROOT_DIR)` (not `BASE_DIR`) before `InitNornir(...)` for
 exactly this reason. `BASE_DIR` (the script's own dir) is still used for
 `baseline.json`, `textfsm/`, and `logs/` — keep that split if you edit it.
 
+## Secrets
+
+Every real credential (`username`/`password`/enable `secret`/OSPF auth
+key/BGP peer password) is a `"${VAR_NAME}"` placeholder in the YAML, resolved
+from environment variables at runtime — never commit a real value into
+`inventory/*.yaml` or `host_vars/*.yaml`. `.env.example` lists every required
+var; `.env` (gitignored) holds the real ones locally, loaded via
+`python-dotenv`.
+
+There are **two separate resolution call sites**, matching the same
+render.py-vs-Nornir split documented below — they don't unify:
+
+- **Nornir path** (`deploy.py`/`collect.py`/`save.py`/`verification/healthcheck.py`):
+  `nornir_transform.py`'s `inject_credentials` is registered as a Nornir
+  `transform_function` (via `TransformFunctionRegister.register(...)`, called
+  manually before `InitNornir()` — `config.yaml`'s `transform_function` value
+  is looked up by **name** in that registry, not imported as a dotted path;
+  there's no packaging/entry-points setup in this repo, so the registration
+  call is required in every script that uses it). It runs once per host after
+  inventory load, resolving `username`/`password` (which `Host.__getattribute__`
+  already merges host→group→defaults on every read) and the netmiko `secret`
+  (which is **not** covered by that merge — `extras` merges as a whole dict,
+  not per-key — so the function reads the already-merged `extras` via
+  `host._get_connection_options_recursively("netmiko")`, resolves just
+  `secret` in place, and writes it back at host level).
+- **Manual path** (`render.py`/`test_template.py`): neither calls
+  `InitNornir()` (see the existing gotcha below), so the transform_function
+  never runs for them. They call `secrets_resolver.resolve_deep()` directly on
+  their own `{**defaults, **host_data}` dict before rendering.
+
 ## Data flow & templating conventions
 
 - **YAML holds decisions, Jinja2 only loops and substitutes.** Don't put
@@ -134,9 +176,10 @@ deploy only on `main`:
 Quick Syntax Checks   py_compile on all *.py, yamllint on host_vars/ + inventory/
 Setup venv            fresh venv, pip install -r requirements.txt
 Template Syntax Check  Jinja2 parse check on every templates/*.j2
-Render Configs         python3 render.py
+Render Configs         python3 render.py (wrapped in withCredentials: lab-ospf-auth-key, lab-bgp-peer-password)
 Validate               python3 ci/check_vrf_consistency.py + ci/check_data_consistency.py
 Deploy (main only)     verification/healthcheck.py -> deploy.py --yes -> verification/healthcheck.py -> save.py
+                       (wrapped in withCredentials: lab-router-admin-creds, lab-router-enable-secret)
 Tag last successful    force-moves git tag `last_deploy_tag` to the deployed commit (main only)
 ```
 
@@ -169,5 +212,9 @@ Distilled from real incidents (full writeups in `README.md`):
 - `verification/baseline.json` and `nornir.log` are gitignored and
   environment-specific — regenerate via `verification/healthcheck.py
   --baseline`, don't hand-edit or commit them.
+- Never hardcode a real secret value back into `inventory/*.yaml` or
+  `host_vars/*.yaml` "to make testing easier" — that's exactly the mistake
+  this repo's `.env`/`${VAR}` convention (see "Secrets" above) exists to
+  prevent. If a script can't find a var, fix `.env`, don't patch the YAML.
 - `useful_tips/` holds older draft notes that predate VRF_B, CI, and Jenkins
   — treat `README.md` as the source of truth if they conflict.

@@ -12,7 +12,7 @@ pipeline {
             steps {
                 sh '''
                     echo "── Python syntax check ──"
-                    python3 -m py_compile render.py deploy.py save.py verification/healthcheck.py collect.py test_template.py ci/check_vrf_consistency.py ci/check_data_consistency.py
+                    python3 -m py_compile render.py deploy.py save.py verification/healthcheck.py collect.py test_template.py secrets_resolver.py nornir_transform.py ci/check_vrf_consistency.py ci/check_data_consistency.py
 
                     echo "── YAML lint (host_vars, inventory) ──"
                     python3 -m yamllint -d "{extends: default, rules: {line-length: disable, document-start: disable}}" host_vars/ inventory/ config.yaml
@@ -58,10 +58,15 @@ sys.exit(1 if failed else 0)
 
         stage('Render Configs') {
             steps {
-                sh '''
-                    . venv/bin/activate
-                    python3 render.py
-                '''
+                withCredentials([
+                    string(credentialsId: 'lab-ospf-auth-key', variable: 'OSPF_AUTH_KEY'),
+                    string(credentialsId: 'lab-bgp-peer-password', variable: 'BGP_PEER_PASSWORD')
+                ]) {
+                    sh '''
+                        . venv/bin/activate
+                        python3 render.py
+                    '''
+                }
             }
         }
 
@@ -80,13 +85,18 @@ sys.exit(1 if failed else 0)
                 branch 'main'
             }
             steps {
-                sh '''
-                    . venv/bin/activate
-                    python3 verification/healthcheck.py
-                    python3 deploy.py --yes
-                    python3 verification/healthcheck.py
-                    python3 save.py
-                '''
+                withCredentials([
+                    usernamePassword(credentialsId: 'lab-router-admin-creds', usernameVariable: 'NORNIR_USERNAME', passwordVariable: 'NORNIR_PASSWORD'),
+                    string(credentialsId: 'lab-router-enable-secret', variable: 'NORNIR_ENABLE_SECRET')
+                ]) {
+                    sh '''
+                        . venv/bin/activate
+                        python3 verification/healthcheck.py
+                        python3 deploy.py --yes
+                        python3 verification/healthcheck.py
+                        python3 save.py
+                    '''
+                }
             }
         }
 

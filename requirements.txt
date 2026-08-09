@@ -87,6 +87,7 @@ PyNaCl==1.6.2
 pyparsing==3.3.2
 pyserial==3.5
 pysnmp==7.1.22
+python-dotenv==1.2.2
 python-engineio==4.9.1
 python-socketio==5.11.2
 pyvmomi==9.0.0.0

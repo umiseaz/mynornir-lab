@@ -67,7 +67,7 @@ bgp:
     - name: rr-peers
       remote_as: 65
       update_source: Loopback0
-      password: cisco
+      password: "${BGP_PEER_PASSWORD}"
       description: "RR Peers"
 
   peer_policies:
