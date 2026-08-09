@@ -59,6 +59,7 @@ sys.exit(1 if failed else 0)
         stage('Render Configs') {
             steps {
                 withCredentials([
+                    usernamePassword(credentialsId: 'lab-router-admin-creds', usernameVariable: 'NORNIR_USERNAME', passwordVariable: 'NORNIR_PASSWORD'),
                     string(credentialsId: 'lab-ospf-auth-key', variable: 'OSPF_AUTH_KEY'),
                     string(credentialsId: 'lab-bgp-peer-password', variable: 'BGP_PEER_PASSWORD')
                 ]) {

@@ -176,7 +176,10 @@ deploy only on `main`:
 Quick Syntax Checks   py_compile on all *.py, yamllint on host_vars/ + inventory/
 Setup venv            fresh venv, pip install -r requirements.txt
 Template Syntax Check  Jinja2 parse check on every templates/*.j2
-Render Configs         python3 render.py (wrapped in withCredentials: lab-ospf-auth-key, lab-bgp-peer-password)
+Render Configs         python3 render.py (wrapped in withCredentials: lab-router-admin-creds,
+                       lab-ospf-auth-key, lab-bgp-peer-password — render.py resolves every
+                       placeholder in the merged defaults+host_vars dict, including
+                       username/password, even though templates never use those two)
 Validate               python3 ci/check_vrf_consistency.py + ci/check_data_consistency.py
 Deploy (main only)     verification/healthcheck.py -> deploy.py --yes -> verification/healthcheck.py -> save.py
                        (wrapped in withCredentials: lab-router-admin-creds, lab-router-enable-secret)
