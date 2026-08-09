@@ -360,6 +360,30 @@ Legacy device compatibility keeps coming back; it's worth having a standard
 fix ready (relax the specific algorithm on the client side, don't fight the
 device).
 
+### 5. SSH host key changes every time a lab device rebuilds
+
+**Symptom:** `Host key verification failed` when SSH'ing directly to a lab
+router (e.g. `ssh admin@10.1.1.7`), even though the device is up and
+reachable — not a Nornir/Jenkins failure, just a manual `ssh` from a
+workstation.
+
+**Root cause:** These are virtual/emulated IOS devices; `crypto key
+generate rsa` runs fresh as part of the bootstrap config, so a device's
+SSH host key changes every time it's rebuilt. `known_hosts` still has the
+previous key pinned, and OpenSSH correctly refuses to connect on a
+mismatch — that's exactly what host-key pinning is for on a normal host.
+
+**Fix:** Added `StrictHostKeyChecking no` and `UserKnownHostsFile /dev/null`
+to the existing `Host 10.1.1.*` block in `~/.ssh/config` — scoped only to
+the lab subnet, so host-key verification stays on for every other host.
+Lab devices don't need pinning: they're on an isolated internal network
+and get rebuilt often enough that pinning just causes friction.
+
+**Lesson:** Host-key pinning is the right default, but it assumes a
+device's identity is stable. Ephemeral lab/CI infrastructure breaks that
+assumption constantly — scope the exception as narrowly as possible (one
+`Host` block, not global) rather than disabling it everywhere.
+
 ---
 
 ## What this project demonstrates
