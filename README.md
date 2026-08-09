@@ -193,6 +193,22 @@ In Jenkins, the same variables come from Jenkins credentials instead of a
 `lab-router-enable-secret`, `lab-ospf-auth-key`, and `lab-bgp-peer-password`
 set up before the `Render Configs` and `Deploy (main only)` stages will pass.
 
+These 4 aren't all this repo's own — 3 of them (`lab-router-admin-creds`,
+`lab-router-enable-secret`, `lab-ospf-auth-key`) are shared with the
+`myansible-lab` Jenkins pipeline too, since both repos need the same real
+router login and OSPF key. `lab-bgp-peer-password` is used **only** here —
+`myansible-lab` handles that same password differently, encrypted straight
+into its YAML with `ansible-vault` instead of pulled from an environment
+variable, so it never needs this one:
+
+| Credential | mynornir-lab | myansible-lab |
+|---|---|---|
+| `lab-router-admin-creds` | yes | yes |
+| `lab-router-enable-secret` | yes | yes |
+| `lab-ospf-auth-key` | yes | yes |
+| `lab-bgp-peer-password` | yes | no |
+| `ansible-vault-password` | no | yes |
+
 If you're rotating these values on the real devices, do that *before*
 changing `.env` — the old values already exist in git history and in every
 previously-rendered `.cfg`, so rotating on the devices is what actually
